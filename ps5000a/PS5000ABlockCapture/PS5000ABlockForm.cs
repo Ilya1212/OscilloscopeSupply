@@ -911,54 +911,54 @@ namespace PS5000A
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(416, 111);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(54, 13);
+            this.label4.Size = new System.Drawing.Size(65, 13);
             this.label4.TabIndex = 21;
-            this.label4.Text = "Датчик C";
+            this.label4.Text = "Датчик C\\2";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(416, 134);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(55, 13);
+            this.label5.Size = new System.Drawing.Size(66, 13);
             this.label5.TabIndex = 22;
-            this.label5.Text = "Датчик D";
+            this.label5.Text = "Датчик D\\3";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(415, 158);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(54, 13);
+            this.label6.Size = new System.Drawing.Size(65, 13);
             this.label6.TabIndex = 23;
-            this.label6.Text = "Датчик E";
+            this.label6.Text = "Датчик E\\4";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(415, 181);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(53, 13);
+            this.label7.Size = new System.Drawing.Size(64, 13);
             this.label7.TabIndex = 24;
-            this.label7.Text = "Датчик F";
+            this.label7.Text = "Датчик F\\5";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(415, 204);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(55, 13);
+            this.label8.Size = new System.Drawing.Size(66, 13);
             this.label8.TabIndex = 25;
-            this.label8.Text = "Датчик G";
+            this.label8.Text = "Датчик G\\6";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(416, 227);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(55, 13);
+            this.label9.Size = new System.Drawing.Size(66, 13);
             this.label9.TabIndex = 26;
-            this.label9.Text = "Датчик H";
+            this.label9.Text = "Датчик H\\7";
             // 
             // button5
             // 
