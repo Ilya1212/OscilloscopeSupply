@@ -181,7 +181,7 @@ namespace PS5000A
         }
 
 
-        private void buttonOpen_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder UnitInfo = new StringBuilder(80);
 
@@ -199,16 +199,15 @@ namespace PS5000A
                            "Analogue Hardware "
                          };
 
-            Imports.DeviceResolution resolution = Imports.DeviceResolution.PS5000A_DR_14BIT;
-            //Imports.DeviceResolution resolution = Imports.DeviceResolution.PS5000A_DR_8BIT;
-
+            Imports.DeviceResolution resolution = Imports.DeviceResolution.PS5000A_DR_16BIT;
+            
 
             if (_handle > 0)
             {
                 Imports.CloseUnit(_handle);
-                textBoxUnitInfo.Text = "";
+                //textBoxUnitInfo.Text = "";
                 _handle = 0;
-                buttonOpen.Text = "Open";
+                button1.Text = "Open";
             }
             else
             {
@@ -232,172 +231,251 @@ namespace PS5000A
                         // Do nothing - power supply connected
                     }
 
-                    textBoxUnitInfo.Text = "Handle            " + _handle.ToString() + "\r\n";
+                    //textBoxUnitInfo.Text = "Handle            " + _handle.ToString() + "\r\n";
 
-                    for (int i = 0; i < 9; i++)
-                    {
-                        short requiredSize;
-                        Imports.GetUnitInfo(_handle, UnitInfo, 80, out requiredSize, (uint)i);
-                        textBoxUnitInfo.AppendText(description[i] + UnitInfo + "\r\n");
-                    }
-                    buttonOpen.Text = "Закрыть";
+                    //for (int i = 0; i < 9; i++)
+                    //{
+                    //    short requiredSize;
+                    //    Imports.GetUnitInfo(_handle, UnitInfo, 80, out requiredSize, (uint)i);
+                    //    textBoxUnitInfo.AppendText(description[i] + UnitInfo + "\r\n");
+                    //}
+                    button1.Text = "Закрыть";
                 }
             }
         }
 
-        void start(uint sampleCount = 10000, int write_every=100)
+        //////void start(uint sampleCount = 10000, int write_every=100)
+        //////{
+        //////    {
+        //////        uint status;
+        //////        int ms;
+        //////        short enable =1;
+        //////        uint delay = 0;
+        //////        short threshold = 25000;
+        //////        short auto = 22222;
+        //////        status = Imports.MemorySegments(_handle, 4, out ms);
+        //////        status = Imports.SetChannel(_handle, Imports.Channel.ChannelA, 1, Imports.Coupling.PS5000A_AC, Imports.Range.Range_500mV, 0); 
+        //////        status = Imports.SetBandwidthFilter(_handle, Imports.Channel.ChannelA, Imports.BandwidthLimiter.PS5000A_BW_20MHZ);
+        //////        status = Imports.SetSimpleTrigger(_handle, enable, Imports.Channel.External, threshold, Imports.ThresholdDirection.Rising, delay, auto);
+        //////        _ready = false;
+        //////        _callbackDelegate = BlockCallback;
+        //////        _channelCount = 4;
+        //////        string data;
+        //////        int x;
+        //////        bool retry;
+
+        //////        PinnedArray<short>[] minPinned = new PinnedArray<short>[_channelCount];
+        //////        PinnedArray<short>[] maxPinned = new PinnedArray<short>[_channelCount];
+
+        //////        int timeIndisposed;
+        //////        short[] minBuffersA = new short[sampleCount];
+        //////        short[] maxBuffersA = new short[sampleCount];
+        //////        short[] minBuffersB = new short[sampleCount];
+        //////        short[] maxBuffersB = new short[sampleCount];
+        //////        short[] minBuffersC = new short[sampleCount];
+        //////        short[] maxBuffersC = new short[sampleCount];
+        //////        short[] minBuffersD = new short[sampleCount];
+        //////        short[] maxBuffersD = new short[sampleCount];
+        //////        minPinned[0] = new PinnedArray<short>(minBuffersA);
+        //////        maxPinned[0] = new PinnedArray<short>(maxBuffersA);
+        //////        minPinned[1] = new PinnedArray<short>(minBuffersB);
+        //////        maxPinned[1] = new PinnedArray<short>(maxBuffersB);
+        //////        minPinned[2] = new PinnedArray<short>(minBuffersC);
+        //////        maxPinned[2] = new PinnedArray<short>(maxBuffersC);
+        //////        minPinned[3] = new PinnedArray<short>(minBuffersD);
+        //////        maxPinned[3] = new PinnedArray<short>(maxBuffersD);
+        //////        status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelA, maxBuffersA, minBuffersA, (int)sampleCount, 0, Imports.RatioMode.None);
+        //////        status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelB, maxBuffersB, minBuffersB, (int)sampleCount, 0, Imports.RatioMode.None);
+        //////        status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelC, maxBuffersC, minBuffersC, (int)sampleCount, 0, Imports.RatioMode.None);
+        //////        status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelD, maxBuffersD, minBuffersD, (int)sampleCount, 0, Imports.RatioMode.None);
+        //////        // textMessage.AppendText("BlockData\n");
+
+        //////        /*Find the maximum number of samples and the time interval(in nanoseconds).
+        //////        * If the function returns PICO_OK, the timebase will be used.
+        //////        */
+        //////        int timeInterval;
+        //////        int maxSamples;
+        //////        while (Imports.GetTimebase(_handle, _timebase, (int)sampleCount, out timeInterval, out maxSamples, 0) != 0)
+        //////        {
+        //////            //textMessage.AppendText("Timebase selection\n");
+        //////            _timebase++;
+
+        //////        }
+        //////      //  textMessage.AppendText("Timebase Set\n");
+
+        //////        /* Start it collecting, then wait for completion*/
+        //////        _ready = false;
+        //////        _callbackDelegate = BlockCallback;
+
+        //////        do
+        //////        {
+        //////            retry = false;
+        //////            status = Imports.RunBlock(_handle, 0, (int)sampleCount, _timebase, out timeIndisposed, 0, _callbackDelegate, IntPtr.Zero);
+        //////            if (status == (short)StatusCodes.PICO_POWER_SUPPLY_CONNECTED || status == (short)StatusCodes.PICO_POWER_SUPPLY_NOT_CONNECTED || status == (short)StatusCodes.PICO_POWER_SUPPLY_UNDERVOLTAGE)
+        //////            {
+        //////                status = Imports.ChangePowerSource(_handle, status);
+        //////                retry = true;
+        //////            }
+        //////            else
+        //////            {
+        //////              //  textMessage.AppendText("Run Block Called\n");
+        //////            }
+        //////        }
+        //////        while (retry);
+
+        //////     //   textMessage.AppendText("Waiting for Data\n");
+
+        //////        while (!_ready)
+        //////        {
+        //////            Thread.Sleep(30);
+        //////        }
+
+        //////        Imports.Stop(_handle);
+
+        //////        if (_ready)
+        //////        {
+        //////            short overflow;
+        //////            status = Imports.GetValues(_handle, 0, ref sampleCount, 1, Imports.RatioMode.None, 0, out overflow);
+
+        //////            if (status == (short)StatusCodes.PICO_OK)
+        //////            {
+        //////            //    textMessage.AppendText("Have Data\n");
+        //////                for (x = 0; x < sampleCount; x++)
+        //////                {
+        //////                    //if (x%write_every==0)
+        //////                    //{
+        //////                    //data = maxBuffersA[x].ToString();
+        //////                    ////textData.AppendText(data+" \n");
+        //////                    //}
+
+        //////                    masA[x] += maxBuffersA[x];
+        //////                    masB[x] += maxBuffersB[x];
+        //////                    masC[x] += maxBuffersC[x];
+        //////                    masD[x] += maxBuffersD[x];
+        //////                }
+
+
+        //////            }
+        //////            else
+        //////            {
+        //////              //  textMessage.AppendText("No Data\n");
+
+        //////            }
+        //////        }
+        //////        else
+        //////        {
+        //////           // textMessage.AppendText("data collection aborted\n");
+        //////        }
+
+        //////        Imports.Stop(_handle);
+
+        //////        foreach (PinnedArray<short> p in minPinned)
+        //////        {
+        //////            if (p != null)
+        //////                p.Dispose();
+        //////        }
+        //////        foreach (PinnedArray<short> p in maxPinned)
+        //////        {
+        //////            if (p != null)
+        //////                p.Dispose();
+        //////        }
+        //////    }
+        //////}
+
+
+        void start(uint sampleCountAfter = 50000, uint sampleCountBefore = 50000, int write_every = 100)
         {
+            uint all_ = sampleCountAfter + sampleCountBefore;
+            uint status;
+            int ms;
+            status = Imports.MemorySegments(_handle, 1, out ms);
+            Imports.Range IR = (Imports.Range)comboRangeA.SelectedIndex;
+              status = Imports.SetChannel(_handle, Imports.Channel.ChannelA, 1, Imports.Coupling.PS5000A_AC, IR, 0);
+            // Voltage_Range = 200;
+            //  status = Imports.SetChannel(_handle, Imports.Channel.ChannelA, 1, Imports.Coupling.PS5000A_AC, Imports.Range.Range_200mV, 0);
+            //status = Imports.SetChannel(_handle, Imports.Channel.ChannelA, 1, Imports.Coupling.PS5000A_DC, Imports.Range.Range_200mV, 0);
+
+            const short enable = 1;
+            const uint delay = 0;
+            const short threshold = 25000;
+            const short auto = 22222;
+
+            status = Imports.SetBandwidthFilter(_handle, Imports.Channel.ChannelA, Imports.BandwidthLimiter.PS5000A_BW_20MHZ);
+            status = Imports.SetSimpleTrigger(_handle, enable, Imports.Channel.External, threshold, Imports.ThresholdDirection.Rising, delay, auto);
+            _ready = false;
+            _callbackDelegate = BlockCallback;
+            _channelCount = 1;
+            //string data;
+            int x;
+
+
+            bool retry;
+
+            PinnedArray<short>[] minPinned = new PinnedArray<short>[_channelCount];
+            PinnedArray<short>[] maxPinned = new PinnedArray<short>[_channelCount];
+
+            int timeIndisposed;
+            short[] minBuffersA = new short[all_];
+            short[] maxBuffersA = new short[all_];
+            minPinned[0] = new PinnedArray<short>(minBuffersA);
+            maxPinned[0] = new PinnedArray<short>(maxBuffersA);
+            status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelA, maxBuffersA, minBuffersA, (int)sampleCountAfter + (int)sampleCountBefore, 0, Imports.RatioMode.None);
+
+            //int timeInterval;
+            //int maxSamples;
+            //while (Imports.GetTimebase(_handle, _timebase, (int)sampleCount, out timeInterval, out maxSamples, 0) != 0)
+            //{
+            //    _timebase++;
+            //}
+            _ready = false;
+            _callbackDelegate = BlockCallback;
+            do
             {
-                uint status;
-                int ms;
-                status = Imports.MemorySegments(_handle, 4, out ms);
-
-                
-                status = Imports.SetChannel(_handle, Imports.Channel.ChannelA, 1, Imports.Coupling.PS5000A_DC, Imports.Range.Range_500mV, 0);
-                status = Imports.SetChannel(_handle, Imports.Channel.ChannelB, 1, Imports.Coupling.PS5000A_DC, Imports.Range.Range_500mV, 0);
-                status = Imports.SetChannel(_handle, Imports.Channel.ChannelC, 1, Imports.Coupling.PS5000A_DC, Imports.Range.Range_500mV, 0);
-                status = Imports.SetChannel(_handle, Imports.Channel.ChannelD, 1, Imports.Coupling.PS5000A_DC, Imports.Range.Range_500mV, 0);
-
-                short enable =1;
-                uint delay = 0;
-                short threshold = 25000;
-                short auto = 22222;
-
-                status = Imports.SetBandwidthFilter(_handle, Imports.Channel.ChannelA, Imports.BandwidthLimiter.PS5000A_BW_20MHZ);
-                status = Imports.SetBandwidthFilter(_handle, Imports.Channel.ChannelB, Imports.BandwidthLimiter.PS5000A_BW_20MHZ);
-                status = Imports.SetBandwidthFilter(_handle, Imports.Channel.ChannelC, Imports.BandwidthLimiter.PS5000A_BW_20MHZ);
-                status = Imports.SetBandwidthFilter(_handle, Imports.Channel.ChannelD, Imports.BandwidthLimiter.PS5000A_BW_20MHZ);
-
-
-                status = Imports.SetSimpleTrigger(_handle, enable, Imports.Channel.External, threshold, Imports.ThresholdDirection.Rising, delay, auto);
-                _ready = false;
-                _callbackDelegate = BlockCallback;
-                _channelCount = 4;
-                string data;
-                int x;
-
-               // textMessage.Clear();
-              //  textData.Clear();
-
-                bool retry;
-                
-                PinnedArray<short>[] minPinned = new PinnedArray<short>[_channelCount];
-                PinnedArray<short>[] maxPinned = new PinnedArray<short>[_channelCount];
-
-                int timeIndisposed;
-                short[] minBuffersA = new short[sampleCount];
-                short[] maxBuffersA = new short[sampleCount];
-                short[] minBuffersB = new short[sampleCount];
-                short[] maxBuffersB = new short[sampleCount];
-                short[] minBuffersC = new short[sampleCount];
-                short[] maxBuffersC = new short[sampleCount];
-                short[] minBuffersD = new short[sampleCount];
-                short[] maxBuffersD = new short[sampleCount];
-                minPinned[0] = new PinnedArray<short>(minBuffersA);
-                maxPinned[0] = new PinnedArray<short>(maxBuffersA);
-                minPinned[1] = new PinnedArray<short>(minBuffersB);
-                maxPinned[1] = new PinnedArray<short>(maxBuffersB);
-                minPinned[2] = new PinnedArray<short>(minBuffersC);
-                maxPinned[2] = new PinnedArray<short>(maxBuffersC);
-                minPinned[3] = new PinnedArray<short>(minBuffersD);
-                maxPinned[3] = new PinnedArray<short>(maxBuffersD);
-                status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelA, maxBuffersA, minBuffersA, (int)sampleCount, 0, Imports.RatioMode.None);
-                status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelB, maxBuffersB, minBuffersB, (int)sampleCount, 0, Imports.RatioMode.None);
-                status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelC, maxBuffersC, minBuffersC, (int)sampleCount, 0, Imports.RatioMode.None);
-                status = Imports.SetDataBuffers(_handle, Imports.Channel.ChannelD, maxBuffersD, minBuffersD, (int)sampleCount, 0, Imports.RatioMode.None);
-                // textMessage.AppendText("BlockData\n");
-
-                /*Find the maximum number of samples and the time interval(in nanoseconds).
-                * If the function returns PICO_OK, the timebase will be used.
-                */
-                int timeInterval;
-                int maxSamples;
-                while (Imports.GetTimebase(_handle, _timebase, (int)sampleCount, out timeInterval, out maxSamples, 0) != 0)
+                retry = false;
+                status = Imports.RunBlock(_handle, (int)sampleCountBefore, (int)sampleCountAfter, _timebase, out timeIndisposed, 0, _callbackDelegate, IntPtr.Zero);
+                if (status == (short)StatusCodes.PICO_POWER_SUPPLY_CONNECTED || status == (short)StatusCodes.PICO_POWER_SUPPLY_NOT_CONNECTED || status == (short)StatusCodes.PICO_POWER_SUPPLY_UNDERVOLTAGE)
                 {
-                    //textMessage.AppendText("Timebase selection\n");
-                    _timebase++;
-
-                }
-              //  textMessage.AppendText("Timebase Set\n");
-
-                /* Start it collecting, then wait for completion*/
-                _ready = false;
-                _callbackDelegate = BlockCallback;
-
-                do
-                {
-                    retry = false;
-                    status = Imports.RunBlock(_handle, 0, (int)sampleCount, _timebase, out timeIndisposed, 0, _callbackDelegate, IntPtr.Zero);
-                    if (status == (short)StatusCodes.PICO_POWER_SUPPLY_CONNECTED || status == (short)StatusCodes.PICO_POWER_SUPPLY_NOT_CONNECTED || status == (short)StatusCodes.PICO_POWER_SUPPLY_UNDERVOLTAGE)
-                    {
-                        status = Imports.ChangePowerSource(_handle, status);
-                        retry = true;
-                    }
-                    else
-                    {
-                      //  textMessage.AppendText("Run Block Called\n");
-                    }
-                }
-                while (retry);
-
-             //   textMessage.AppendText("Waiting for Data\n");
-
-                while (!_ready)
-                {
-                    Thread.Sleep(30);
-                }
-
-                Imports.Stop(_handle);
-
-                if (_ready)
-                {
-                    short overflow;
-                    status = Imports.GetValues(_handle, 0, ref sampleCount, 1, Imports.RatioMode.None, 0, out overflow);
-
-                    if (status == (short)StatusCodes.PICO_OK)
-                    {
-                    //    textMessage.AppendText("Have Data\n");
-                        for (x = 0; x < sampleCount; x++)
-                        {
-                            //if (x%write_every==0)
-                            //{
-                            //data = maxBuffersA[x].ToString();
-                            ////textData.AppendText(data+" \n");
-                            //}
-
-                            masA[x] += maxBuffersA[x];
-                            masB[x] += maxBuffersB[x];
-                            masC[x] += maxBuffersC[x];
-                            masD[x] += maxBuffersD[x];
-                        }
-
-
-                    }
-                    else
-                    {
-                      //  textMessage.AppendText("No Data\n");
-
-                    }
+                    status = Imports.ChangePowerSource(_handle, status);
+                    retry = true;
                 }
                 else
                 {
-                   // textMessage.AppendText("data collection aborted\n");
-                }
-
-                Imports.Stop(_handle);
-
-                foreach (PinnedArray<short> p in minPinned)
-                {
-                    if (p != null)
-                        p.Dispose();
-                }
-                foreach (PinnedArray<short> p in maxPinned)
-                {
-                    if (p != null)
-                        p.Dispose();
+                    //  textMessage.AppendText("Run Block Called\n");
                 }
             }
+            while (retry);
+            while (!_ready)
+            {
+                Thread.Sleep(30);
+            }
+            Imports.Stop(_handle);
+            if (_ready)
+            {
+                short overflow;
+                status = Imports.GetValues(_handle, 0, ref all_, 1, Imports.RatioMode.None, 0, out overflow);
+
+                if (status == (short)StatusCodes.PICO_OK)
+                {
+                    for (x = 0; x < all_; x++)
+                        masA[x] += maxBuffersA[x] + minBuffersA[x];//=========================================================!
+                }
+
+            }
+
+            Imports.Stop(_handle);
+            foreach (PinnedArray<short> p in minPinned)
+            {
+                if (p != null)
+                    p.Dispose();
+            }
+            foreach (PinnedArray<short> p in maxPinned)
+            {
+                if (p != null)
+                    p.Dispose();
+            }
+
         }
+
         double T0; double OffsetT; uint n=10000; int time_scale;int countz=100;
         double dt_ = 104 * 1.0E-9;
         long[] masA;
@@ -447,7 +525,7 @@ namespace PS5000A
             }
             });
             timer1.Stop();
-            toolStripStatusLabel1.Text = "Преобразование завершено. Данные записываются в файл";
+            progressBar1.Text = "Преобразование завершено. Данные записываются в файл";
 
             //  string filename = filenames[0];//"TransDmitryi.txt";
       //первый 
@@ -535,8 +613,10 @@ namespace PS5000A
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
             this.comboRangeA = new System.Windows.Forms.ComboBox();
             this.textBox14 = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
@@ -552,7 +632,7 @@ namespace PS5000A
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.button2 = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -590,6 +670,15 @@ namespace PS5000A
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(467, 74);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(58, 13);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "Диапазон";
             // 
             // comboRangeA
             // 
@@ -697,6 +786,7 @@ namespace PS5000A
             this.button1.TabIndex = 0;
             this.button1.Text = "Подключиться";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // tabPage2
             // 
@@ -725,15 +815,6 @@ namespace PS5000A
             this.progressBar1.Size = new System.Drawing.Size(660, 23);
             this.progressBar1.TabIndex = 1;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(467, 74);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(58, 13);
-            this.label1.TabIndex = 26;
-            this.label1.Text = "Диапазон";
             // 
             // PS5000ABlockForm
             // 

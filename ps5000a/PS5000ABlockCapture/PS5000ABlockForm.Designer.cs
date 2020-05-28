@@ -74,6 +74,7 @@ namespace PS5000A
         private System.Windows.Forms.ComboBox comboRangeA;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
