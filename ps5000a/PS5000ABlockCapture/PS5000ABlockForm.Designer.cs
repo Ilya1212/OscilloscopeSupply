@@ -61,6 +61,12 @@ namespace PS5000A
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ComboBox comboRangeA;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.TextBox textBox14;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.TextBox textBox13;
@@ -69,12 +75,6 @@ namespace PS5000A
         private System.Windows.Forms.TextBox textBox11;
         private System.Windows.Forms.TextBox textBox10;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox textBox9;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.ComboBox comboRangeA;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Timer timer1;
     }
 }
 

@@ -478,14 +478,9 @@ namespace PS5000A
 
         double T0; double OffsetT; uint n=10000; int time_scale;int countz=100;
         double dt_ = 104 * 1.0E-9;
-        long[] masA;
-        long[] masB;
-        long[] masC;
-        long[] masD;
+        long[] masA; 
         double[] arrA;
-        double[] arrB;
-        double[] arrC;
-        double[] arrD;
+  
         /*
          * 
          * частоты от 0 Гц 10Mhz
@@ -493,19 +488,13 @@ namespace PS5000A
          * df = 100;
          *
          */
-        Complex[] Transform_dataA;
-        Complex[] Transform_dataB;
-        Complex[] Transform_dataC;
-        Complex[] Transform_dataD;
+        Complex[] Transform_dataA; 
         async void CalcTransform(double f0, double f1 , int sc)
         {
             double fl = f1 - f0;
             double df = (f1 - f0) / (sc - 1);
             int count_approx = sc;
-            Transform_dataA = new Complex[count_approx];
-            Transform_dataB = new Complex[count_approx];
-            Transform_dataC = new Complex[count_approx];
-            Transform_dataD = new Complex[count_approx];
+            Transform_dataA = new Complex[count_approx]; 
 
             all = sc;
             timer1.Start();
@@ -517,17 +506,14 @@ namespace PS5000A
                 for (int j1= 0;j1<n; j1++)
                 {
                     Complex buf = new Complex (0,(f0 + df * j) * j1 * dt_*2*Math.PI);
-                    Transform_dataA[j] += arrA[j1] * Complex.Exp(buf)* dt_;
-                    Transform_dataB[j] += arrB[j1] * Complex.Exp(buf) * dt_;
-                    Transform_dataC[j] += arrC[j1] * Complex.Exp(buf) * dt_;
-                    Transform_dataD[j] += arrD[j1] * Complex.Exp(buf) * dt_;
+                    Transform_dataA[j] += arrA[j1] * Complex.Exp(buf)* dt_; 
                     }
             }
             });
             timer1.Stop();
             progressBar1.Text = "Преобразование завершено. Данные записываются в файл";
 
-            //  string filename = filenames[0];//"TransDmitryi.txt";
+            //  string filename = filenames[0]; 
       //первый 
             using (StreamWriter fs = new StreamWriter(filenames[0]))
             {
@@ -552,63 +538,6 @@ namespace PS5000A
                 }
             }
 
-            //второй
-            using (StreamWriter fs = new StreamWriter(filenames[1]))
-            {
-                fs.WriteLine("w Re(f(w)) Im(f(w))");
-                for (int i = 0; i < count_approx; i++)
-                { 
-                    double freq = (f0 + df * i) * 2 * Math.PI * 1.0E-6; 
-                    fs.WriteLine(freq + " " + Transform_dataB[i].Real + " " + Transform_dataB[i].Imaginary);
-                }
-
-            }
-            filename2 = "TransB.txt";
-            using (StreamWriter fs = new StreamWriter(filename2))
-            {
-                for (int i = 0; i < count_approx; i++)
-                {
-                    fs.WriteLine((f0 + df * i).ToString() + " " + Transform_dataB[i].Magnitude.ToString());
-                }
-            }
-            //третий
-            using (StreamWriter fs = new StreamWriter(filenames[2]))
-            {
-                fs.WriteLine("w Re(f(w)) Im(f(w))");
-                for (int i = 0; i < count_approx; i++)
-                {
-                    double freq = (f0 + df * i) * 2 * Math.PI * 1.0E-6;
-                    fs.WriteLine(freq + " " + Transform_dataC[i].Real + " " + Transform_dataC[i].Imaginary);
-                }
-
-            }
-            filename2 = "TransC.txt";
-            using (StreamWriter fs = new StreamWriter(filename2))
-            {
-                for (int i = 0; i < count_approx; i++)
-                {
-                    fs.WriteLine((f0 + df * i).ToString() + " " + Transform_dataC[i].Magnitude.ToString());
-                }
-            }
-            //четвертый
-            using (StreamWriter fs = new StreamWriter(filenames[3]))
-            {
-                fs.WriteLine("w Re(f(w)) Im(f(w))");
-                for (int i = 0; i < count_approx; i++)
-                {
-                    double freq = (f0 + df * i) * 2 * Math.PI * 1.0E-6;
-                    fs.WriteLine(freq + " " + Transform_dataD[i].Real + " " + Transform_dataD[i].Imaginary);
-                }
-            }
-            filename2 = "TransD.txt";
-            using (StreamWriter fs = new StreamWriter(filename2))
-            {
-                for (int i = 0; i < count_approx; i++)
-                {
-                    fs.WriteLine((f0 + df * i).ToString() + " " + Transform_dataD[i].Magnitude.ToString());
-                }
-            }
-
         }
 
         private void InitializeComponent()
@@ -618,6 +547,13 @@ namespace PS5000A
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
             this.comboRangeA = new System.Windows.Forms.ComboBox();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.textBox14 = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.textBox13 = new System.Windows.Forms.TextBox();
@@ -626,13 +562,6 @@ namespace PS5000A
             this.textBox11 = new System.Windows.Forms.TextBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.button2 = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -652,14 +581,6 @@ namespace PS5000A
             // 
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.comboRangeA);
-            this.tabPage1.Controls.Add(this.textBox14);
-            this.tabPage1.Controls.Add(this.label21);
-            this.tabPage1.Controls.Add(this.textBox13);
-            this.tabPage1.Controls.Add(this.label20);
-            this.tabPage1.Controls.Add(this.label15);
-            this.tabPage1.Controls.Add(this.textBox11);
-            this.tabPage1.Controls.Add(this.textBox10);
-            this.tabPage1.Controls.Add(this.label14);
             this.tabPage1.Controls.Add(this.textBox9);
             this.tabPage1.Controls.Add(this.label13);
             this.tabPage1.Controls.Add(this.button1);
@@ -687,78 +608,6 @@ namespace PS5000A
             this.comboRangeA.Name = "comboRangeA";
             this.comboRangeA.Size = new System.Drawing.Size(121, 21);
             this.comboRangeA.TabIndex = 25;
-            // 
-            // textBox14
-            // 
-            this.textBox14.Location = new System.Drawing.Point(310, 109);
-            this.textBox14.Name = "textBox14";
-            this.textBox14.Size = new System.Drawing.Size(100, 20);
-            this.textBox14.TabIndex = 24;
-            this.textBox14.Text = "26000";
-            this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(190, 112);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(114, 13);
-            this.label21.TabIndex = 23;
-            this.label21.Text = "Число подавляемых ";
-            // 
-            // textBox13
-            // 
-            this.textBox13.Location = new System.Drawing.Point(310, 144);
-            this.textBox13.Name = "textBox13";
-            this.textBox13.Size = new System.Drawing.Size(100, 20);
-            this.textBox13.TabIndex = 22;
-            this.textBox13.Text = "25000";
-            this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(216, 147);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(88, 13);
-            this.label20.TabIndex = 21;
-            this.label20.Text = "Число шагов до";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(203, 219);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(101, 13);
-            this.label15.TabIndex = 20;
-            this.label15.Text = "Число усреднений";
-            // 
-            // textBox11
-            // 
-            this.textBox11.Location = new System.Drawing.Point(310, 216);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(100, 20);
-            this.textBox11.TabIndex = 19;
-            this.textBox11.Text = "100";
-            this.textBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox10
-            // 
-            this.textBox10.Location = new System.Drawing.Point(310, 181);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(100, 20);
-            this.textBox10.TabIndex = 18;
-            this.textBox10.Text = "130000";
-            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(198, 188);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(106, 13);
-            this.label14.TabIndex = 17;
-            this.label14.Text = "Число шагов после";
             // 
             // textBox9
             // 
@@ -790,6 +639,14 @@ namespace PS5000A
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.textBox14);
+            this.tabPage2.Controls.Add(this.label21);
+            this.tabPage2.Controls.Add(this.textBox13);
+            this.tabPage2.Controls.Add(this.label20);
+            this.tabPage2.Controls.Add(this.label15);
+            this.tabPage2.Controls.Add(this.textBox11);
+            this.tabPage2.Controls.Add(this.textBox10);
+            this.tabPage2.Controls.Add(this.label14);
             this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -801,12 +658,13 @@ namespace PS5000A
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(11, 10);
+            this.button2.Location = new System.Drawing.Point(6, 31);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(103, 23);
             this.button2.TabIndex = 0;
-            this.button2.Text = "button2";
+            this.button2.Text = "Сбор данных";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // progressBar1
             // 
@@ -816,16 +674,89 @@ namespace PS5000A
             this.progressBar1.TabIndex = 1;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
+            // textBox14
+            // 
+            this.textBox14.Location = new System.Drawing.Point(340, 90);
+            this.textBox14.Name = "textBox14";
+            this.textBox14.Size = new System.Drawing.Size(100, 20);
+            this.textBox14.TabIndex = 32;
+            this.textBox14.Text = "26000";
+            this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(220, 93);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(114, 13);
+            this.label21.TabIndex = 31;
+            this.label21.Text = "Число подавляемых ";
+            // 
+            // textBox13
+            // 
+            this.textBox13.Location = new System.Drawing.Point(340, 125);
+            this.textBox13.Name = "textBox13";
+            this.textBox13.Size = new System.Drawing.Size(100, 20);
+            this.textBox13.TabIndex = 30;
+            this.textBox13.Text = "25000";
+            this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(246, 128);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(88, 13);
+            this.label20.TabIndex = 29;
+            this.label20.Text = "Число шагов до";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(233, 200);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(101, 13);
+            this.label15.TabIndex = 28;
+            this.label15.Text = "Число усреднений";
+            // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(340, 197);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(100, 20);
+            this.textBox11.TabIndex = 27;
+            this.textBox11.Text = "100";
+            this.textBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(340, 162);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(100, 20);
+            this.textBox10.TabIndex = 26;
+            this.textBox10.Text = "130000";
+            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(228, 169);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(106, 13);
+            this.label14.TabIndex = 25;
+            this.label14.Text = "Число шагов после";
+            // 
             // PS5000ABlockForm
             // 
             this.ClientSize = new System.Drawing.Size(671, 358);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.tabControl1);
-            this.Name = "PS5000ABlockForm";
+            this.Name = "PS5000A Supply";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -833,6 +764,16 @@ namespace PS5000A
         private void progressBar1_Click(object sender, EventArgs e)
         {
 
+        }
+        public void CollectData()
+        {
+            for (uint i = 0; i < uint.Parse(textBox11.Text); i++) 
+                start(uint.Parse(textBox13.Text), uint.Parse(textBox10.Text), 1);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+          
         }
 
         private async void buttonStart_Click(object sender, EventArgs e)
