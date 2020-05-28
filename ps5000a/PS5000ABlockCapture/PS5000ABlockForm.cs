@@ -236,8 +236,10 @@ namespace PS5000A
             const uint delay = 0;
             const short threshold = 25000;
             const short auto = 22222;
-
-            status = Imports.SetBandwidthFilter(_handle, Imports.Channel.ChannelA, Imports.BandwidthLimiter.PS5000A_BW_20MHZ);
+            if (checkBox1.Checked)
+            {
+                status = Imports.SetBandwidthFilter(_handle, Imports.Channel.ChannelA, Imports.BandwidthLimiter.PS5000A_BW_20MHZ);
+            }
             status = Imports.SetSimpleTrigger(_handle, enable, Imports.Channel.External, threshold, Imports.ThresholdDirection.Rising, delay, auto);
             _ready = false;
             _callbackDelegate = BlockCallback;
@@ -402,6 +404,10 @@ namespace PS5000A
             this.button2 = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -411,6 +417,9 @@ namespace PS5000A
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Location = new System.Drawing.Point(3, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -429,7 +438,7 @@ namespace PS5000A
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(660, 307);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.Text = "Подключение";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // label1
@@ -471,7 +480,7 @@ namespace PS5000A
             // 
             this.button1.Location = new System.Drawing.Point(17, 64);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(98, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "Подключиться";
             this.button1.UseVisualStyleBackColor = true;
@@ -479,6 +488,7 @@ namespace PS5000A
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkBox1);
             this.tabPage2.Controls.Add(this.textBox14);
             this.tabPage2.Controls.Add(this.label21);
             this.tabPage2.Controls.Add(this.textBox13);
@@ -493,12 +503,12 @@ namespace PS5000A
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(660, 307);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.Text = "Сбор данных";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // textBox14
             // 
-            this.textBox14.Location = new System.Drawing.Point(340, 90);
+            this.textBox14.Location = new System.Drawing.Point(345, 21);
             this.textBox14.Name = "textBox14";
             this.textBox14.Size = new System.Drawing.Size(100, 20);
             this.textBox14.TabIndex = 32;
@@ -508,7 +518,7 @@ namespace PS5000A
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(220, 93);
+            this.label21.Location = new System.Drawing.Point(225, 24);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(114, 13);
             this.label21.TabIndex = 31;
@@ -516,7 +526,7 @@ namespace PS5000A
             // 
             // textBox13
             // 
-            this.textBox13.Location = new System.Drawing.Point(340, 125);
+            this.textBox13.Location = new System.Drawing.Point(345, 56);
             this.textBox13.Name = "textBox13";
             this.textBox13.Size = new System.Drawing.Size(100, 20);
             this.textBox13.TabIndex = 30;
@@ -526,7 +536,7 @@ namespace PS5000A
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(246, 128);
+            this.label20.Location = new System.Drawing.Point(251, 59);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(88, 13);
             this.label20.TabIndex = 29;
@@ -535,7 +545,7 @@ namespace PS5000A
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(233, 200);
+            this.label15.Location = new System.Drawing.Point(238, 131);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(101, 13);
             this.label15.TabIndex = 28;
@@ -543,7 +553,7 @@ namespace PS5000A
             // 
             // textBox11
             // 
-            this.textBox11.Location = new System.Drawing.Point(340, 197);
+            this.textBox11.Location = new System.Drawing.Point(345, 128);
             this.textBox11.Name = "textBox11";
             this.textBox11.Size = new System.Drawing.Size(100, 20);
             this.textBox11.TabIndex = 27;
@@ -552,7 +562,7 @@ namespace PS5000A
             // 
             // textBox10
             // 
-            this.textBox10.Location = new System.Drawing.Point(340, 162);
+            this.textBox10.Location = new System.Drawing.Point(345, 93);
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(100, 20);
             this.textBox10.TabIndex = 26;
@@ -562,7 +572,7 @@ namespace PS5000A
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(228, 169);
+            this.label14.Location = new System.Drawing.Point(233, 100);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(106, 13);
             this.label14.TabIndex = 25;
@@ -570,7 +580,7 @@ namespace PS5000A
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(6, 31);
+            this.button2.Location = new System.Drawing.Point(6, 18);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(103, 23);
             this.button2.TabIndex = 0;
@@ -589,6 +599,45 @@ namespace PS5000A
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(41, 221);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(240, 17);
+            this.checkBox1.TabIndex = 33;
+            this.checkBox1.Text = "Ограничение полосы пропускания 20 МГц";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(660, 307);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Коммутация";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(660, 307);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Предобработка";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Size = new System.Drawing.Size(660, 307);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "Обработка";
+            this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // PS5000ABlockForm
             // 
@@ -615,7 +664,7 @@ namespace PS5000A
             for (uint i = 0; i < uint.Parse(textBox11.Text); i++)
             {
                 save = (int)i+1; 
-            start(uint.Parse(textBox13.Text), uint.Parse(textBox10.Text), 1);
+                start(uint.Parse(textBox13.Text), uint.Parse(textBox10.Text), 1);
             }
 
         }
