@@ -20,6 +20,9 @@ namespace PS5000A
     {
 
         Switch Switch1;
+        bool stop_flag = false;
+
+
         #region Поля
         private short _handle;
         public const int BUFFER_SIZE = 1024;
@@ -318,7 +321,7 @@ namespace PS5000A
             } 
         }
 
-        void start(uint sampleCountAfter = 50000, uint sampleCountBefore = 50000, int write_every = 100)
+        void start(uint sampleCountBefore = 50000, uint sampleCountAfter = 50000, int write_every = 100)
         {
             uint all_ = sampleCountAfter + sampleCountBefore;
             uint status;
@@ -566,6 +569,7 @@ namespace PS5000A
             this.button7 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.textBoxUnitInfo = new System.Windows.Forms.TextBox();
+            this.button8 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -648,6 +652,7 @@ namespace PS5000A
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.button8);
             this.tabPage2.Controls.Add(this.checkBox1);
             this.tabPage2.Controls.Add(this.textBox14);
             this.tabPage2.Controls.Add(this.label21);
@@ -738,7 +743,7 @@ namespace PS5000A
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(100, 20);
             this.textBox10.TabIndex = 26;
-            this.textBox10.Text = "130000";
+            this.textBox10.Text = "100000";
             this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label14
@@ -1189,6 +1194,16 @@ namespace PS5000A
             this.textBoxUnitInfo.Size = new System.Drawing.Size(184, 275);
             this.textBoxUnitInfo.TabIndex = 36;
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(7, 48);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(102, 23);
+            this.button8.TabIndex = 34;
+            this.button8.Text = "Стоп";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
             // PS5000ABlockForm
             // 
             this.ClientSize = new System.Drawing.Size(671, 358);
@@ -1219,17 +1234,21 @@ namespace PS5000A
             all = int.Parse(textBox11.Text);
             for (uint i = 0; i < uint.Parse(textBox11.Text); i++)
             {
+                if (stop_flag) break;
                 save = (int)i+1; 
                 start(uint.Parse(textBox13.Text), uint.Parse(textBox10.Text), 1);
                 Visualase(Color.Blue, masA);
             }
             for(uint  i = 0; i< uint.Parse(textBox13.Text) + uint.Parse(textBox10.Text); i++)
             {
-
+                if (stop_flag) break;
                 arrA[i] = (double)masA[i] / 2.0 / (double)uint.Parse(textBox11.Text);
             }
+            if (stop_flag) { 
 
+            save = 0; stop_flag = false;
 
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -1238,7 +1257,7 @@ namespace PS5000A
             timer1.Enabled = true;
             CollectData();
             timer1.Enabled = false;
-            Visualase(Color.Red, arrA);
+           // Visualase(Color.Red, arrA);
         }
 
         private void timer1_Tick_1(object sender, EventArgs e)
@@ -1286,6 +1305,13 @@ namespace PS5000A
             Switch1.OpenPort(listBox1.SelectedIndex); 
             Thread.Sleep(500);
             textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (!stop_flag)
+                stop_flag = true;
+            timer1.Enabled = false;
         }
 
         private async void buttonStart_Click(object sender, EventArgs e)

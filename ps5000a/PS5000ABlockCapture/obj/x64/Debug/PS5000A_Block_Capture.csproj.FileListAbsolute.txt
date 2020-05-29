@@ -5,7 +5,6 @@ C:\Users\user1\Desktop\github\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000A_
 C:\Users\user1\Desktop\github\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000A_Block_Capture.csproj.CoreCompileInputs.cache
 C:\Users\user1\Desktop\github\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000ABlockCapture.exe
 C:\Users\user1\Desktop\github\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000ABlockCapture.pdb
-C:\Users\user1\source\repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000A_Block_Capture.csprojAssemblyReference.cache
 C:\Users\user1\source\repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000A.Properties.Resources.resources
 C:\Users\user1\source\repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000A.PS5000ABlockForm.resources
 C:\Users\user1\source\repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000A_Block_Capture.csproj.GenerateResource.cache
