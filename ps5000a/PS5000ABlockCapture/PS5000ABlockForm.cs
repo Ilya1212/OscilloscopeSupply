@@ -1478,7 +1478,9 @@ namespace PS5000A
         {
             RunAvg(ref arrA, int.Parse(textBox2.Text));
             Visualase(Color.Red, arrA);
-            Save2File(String.Concat(@"C:\Temp\", DateTime.Now.ToString(), "TempCapture.txt"), arrA);
+            string path = String.Concat(@"C:\Temp\", DateTime.Now.ToString().Replace(':', '_'), "TempCapture.txt");
+             
+            Save2File(path, arrA);
 
         }
 
@@ -1501,7 +1503,9 @@ namespace PS5000A
         private void button10_Click(object sender, EventArgs e)
         {
             NoOffset(arrA);
-            Save2File(String.Concat(@"C:\Temp\", DateTime.Now.ToString(), "TempCapture.txt"), arrA);
+            string path = String.Concat(@"C:\Temp\", DateTime.Now.ToString().Replace(':', '_'), "TempCapture.txt");
+
+            Save2File(path, arrA);
         }
 
 
