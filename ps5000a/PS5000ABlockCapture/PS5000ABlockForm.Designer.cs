@@ -119,6 +119,7 @@ namespace PS5000A
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.TextBox textBoxUnitInfo;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.CheckBox checkBox20;
     }
 }
 

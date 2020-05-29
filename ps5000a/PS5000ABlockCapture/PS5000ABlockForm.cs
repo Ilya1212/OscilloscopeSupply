@@ -234,6 +234,20 @@ namespace PS5000A
             }
         }
         
+        void Save2File(string filename, double[] data)
+        { 
+            using (StreamWriter Writer = new StreamWriter(filename))
+            {
+                Writer.WriteLine(data.Length);
+                for (int i = 0; i < data.Length; i++)
+                {
+                    Writer.WriteLine(data[i].ToString().Replace(',', '.'));
+                }
+                Writer.Flush();
+                Writer.Close();
+            }
+        }
+        
         void Visualase(Color color, double[] data)
         {
          //   tabControl1.TabPages[5].Invalidate();
@@ -249,10 +263,10 @@ namespace PS5000A
             double max_abs = 0;
 
 
-            for (int i = 0; i < l - 1; i++)
-            {
-                if (max_abs < Math.Abs(data[i] - data[0]))
-                    max_abs = Math.Abs(data[i] - data[0]);
+            for (int i = 0; i < sx - 1; i++)
+            { 
+                if (max_abs < Math.Abs(data[(int)(i / mult)] - data[0]))
+                    max_abs = Math.Abs(data[(int)(i / mult)] - data[0]);
             }
 
 
@@ -296,6 +310,13 @@ namespace PS5000A
             //Graphics g = this.CreateGraphics();
             //g.DrawLine(new Pen(Color.Red), 0, 0, 100, 100);
         }
+
+
+
+
+
+
+
         void Visualase(Color color, long[] data)
         {
             //tabControl1.TabPages[5].Invalidate();
@@ -306,11 +327,20 @@ namespace PS5000A
             double mult = (double)sx / (double)l;
             Pen pp = new Pen(color);
             double max_abs = 0;
-            for (int i = 0; i < l - 1; i++)
+
+            for (int i = 0; i < sx - 1; i++)
             {
-                if (max_abs < Math.Abs(data[i] - data[0]))
-                    max_abs = Math.Abs(data[i] - data[0]);
+                if (max_abs < Math.Abs(data[(int)(i / mult)] - data[0]))
+                    max_abs = Math.Abs(data[(int)(i / mult)] - data[0]);
             }
+
+            //for (int i = 0; i < l - 1; i++)
+            //{
+            //    if (max_abs < Math.Abs(data[i] - data[0]))
+            //        max_abs = Math.Abs(data[i] - data[0]);
+            //}
+
+
             for (int i = 0; i < sx - 1; i++)
             {
                 int x0 = i;
@@ -570,6 +600,7 @@ namespace PS5000A
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.textBoxUnitInfo = new System.Windows.Forms.TextBox();
             this.button8 = new System.Windows.Forms.Button();
+            this.checkBox20 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -652,6 +683,7 @@ namespace PS5000A
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkBox20);
             this.tabPage2.Controls.Add(this.button8);
             this.tabPage2.Controls.Add(this.checkBox1);
             this.tabPage2.Controls.Add(this.textBox14);
@@ -676,7 +708,7 @@ namespace PS5000A
             this.checkBox1.AutoSize = true;
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(41, 221);
+            this.checkBox1.Location = new System.Drawing.Point(228, 163);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(240, 17);
             this.checkBox1.TabIndex = 33;
@@ -689,7 +721,7 @@ namespace PS5000A
             this.textBox14.Name = "textBox14";
             this.textBox14.Size = new System.Drawing.Size(100, 20);
             this.textBox14.TabIndex = 32;
-            this.textBox14.Text = "26000";
+            this.textBox14.Text = "25100";
             this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label21
@@ -1204,6 +1236,16 @@ namespace PS5000A
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
+            // checkBox20
+            // 
+            this.checkBox20.AutoSize = true;
+            this.checkBox20.Location = new System.Drawing.Point(19, 163);
+            this.checkBox20.Name = "checkBox20";
+            this.checkBox20.Size = new System.Drawing.Size(98, 17);
+            this.checkBox20.TabIndex = 35;
+            this.checkBox20.Text = "Визуализация";
+            this.checkBox20.UseVisualStyleBackColor = true;
+            // 
             // PS5000ABlockForm
             // 
             this.ClientSize = new System.Drawing.Size(671, 358);
@@ -1237,7 +1279,7 @@ namespace PS5000A
                 if (stop_flag) break;
                 save = (int)i+1; 
                 start(uint.Parse(textBox13.Text), uint.Parse(textBox10.Text), 1);
-                Visualase(Color.Blue, masA);
+               if (checkBox20.Checked) Visualase(Color.Blue, masA);
             }
             for(uint  i = 0; i< uint.Parse(textBox13.Text) + uint.Parse(textBox10.Text); i++)
             {
@@ -1251,12 +1293,31 @@ namespace PS5000A
             }
         }
 
+        double FindAvg ( double[] data)
+        {
+            double a = 0;
+            for (int i = 0; i < data.Length; i++)
+            {
+                a += data[i];
+            }
+            return  a / (double)data.Length;
+        }
+        void SuppressSpikes(double[] data, int index)
+        {
+            double A = FindAvg(data);
+            for (int i = 0; i < index; i++)
+            {
+                data[i] = A;
+            }
+        }
         private void button2_Click(object sender, EventArgs e)
         {
 
             timer1.Enabled = true;
             CollectData();
+            SuppressSpikes(arrA, int.Parse(textBox14.Text));
             timer1.Enabled = false;
+            Save2File(@"C:\Temp\CSharpAuthors.txt", arrA);
            // Visualase(Color.Red, arrA);
         }
 

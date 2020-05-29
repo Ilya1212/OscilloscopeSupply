@@ -14,3 +14,4 @@ C:\Users\user1\source\repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapt
 C:\Users\user1\Source\Repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapture\bin\x64\Debug\PS5000ABlockCapture.exe.config
 C:\Users\user1\Source\Repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapture\bin\x64\Debug\PS5000ABlockCapture.exe
 C:\Users\user1\Source\Repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapture\bin\x64\Debug\PS5000ABlockCapture.pdb
+C:\Users\user1\Source\Repos\Ilya1212\OscilloscopeSupply\ps5000a\PS5000ABlockCapture\obj\x64\Debug\PS5000A_Block_Capture.csprojAssemblyReference.cache
