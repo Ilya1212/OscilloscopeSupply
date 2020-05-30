@@ -22,6 +22,7 @@ namespace PS5000A
         private bool stop_flag = false;
         private bool switch_connected = false;
 
+        private string CODES = "ABCDEFGHIKJLMNOP";
 
         #region Поля
         private short _handle;
@@ -86,34 +87,37 @@ namespace PS5000A
             Refresh();
 
         }
-        const double M_PI = 3.1415926535897932384626433832795;
-        Complex[] FurieTransf(double[] data, double dt, double t0, double f0 , double df,int nf)
+
+        private const double M_PI = 3.1415926535897932384626433832795;
+
+        private Complex[] FurieTransf(double[] data, double dt, double t0, double f0, double df, int nf)
         {
             double w0 = 2 * M_PI * f0;
             double dw = 2 * M_PI * df;
             double mult = Math.Sqrt(1.0 / 2.0 / M_PI);
-            
+
             Complex[] result = new Complex[nf];
-            double w= w0;
+            double w = w0;
             int l = data.Length;
-            for (int j = 0; j<nf; j++)
+            for (int j = 0; j < nf; j++)
             {
                 Complex base_exp = Complex.Exp(-1 * w * t0 * Complex.ImaginaryOne);
                 Complex mult_exp = Complex.Exp(-1 * w * dt * Complex.ImaginaryOne);
                 Complex _exp = base_exp * mult_exp;
-                result[j] = (data[0]* base_exp +
-                data[l-1] * Complex.Exp(-1 * w * (t0+(double)(l - 1)*dt) * Complex.ImaginaryOne)  )/2.0;
-                for(int k = 1; k< l-1; k++)
+                result[j] = (data[0] * base_exp +
+                data[l - 1] * Complex.Exp(-1 * w * (t0 + (double)(l - 1) * dt) * Complex.ImaginaryOne)) / 2.0;
+                for (int k = 1; k < l - 1; k++)
                 {
                     result[j] = result[j] + data[k] * _exp;
-                    _exp =  _exp * mult_exp;
+                    _exp = _exp * mult_exp;
                 }
-                result[j] =dt* result[j] *mult;
-                w = w+ dw;
+                result[j] = dt * result[j] * mult;
+                w = w + dw;
             }
             return result;
         }
-        Complex[] FurieTransfReverse(double[] data, double dt, double t0, int nt, double f0, double df)
+
+        private Complex[] FurieTransfReverse(double[] data, double dt, double t0, int nt, double f0, double df)
         {
             double w0 = 2 * M_PI * f0;
             double dw = 2 * M_PI * df;
@@ -123,8 +127,8 @@ namespace PS5000A
             int l = data.Length;
             for (int j = 0; j < nt; j++)
             {
-                Complex base_exp = Complex.Exp( t * w0 * Complex.ImaginaryOne);
-                Complex mult_exp = Complex.Exp( t * dw * Complex.ImaginaryOne);
+                Complex base_exp = Complex.Exp(t * w0 * Complex.ImaginaryOne);
+                Complex mult_exp = Complex.Exp(t * dw * Complex.ImaginaryOne);
                 Complex _exp = base_exp * mult_exp;
                 result[j] = (data[0] * base_exp +
                 data[l - 1] * Complex.Exp(t * (w0 + (double)(l - 1) * dw)
@@ -604,6 +608,10 @@ namespace PS5000A
             this.label13 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.button11 = new System.Windows.Forms.Button();
             this.checkBox20 = new System.Windows.Forms.CheckBox();
             this.button8 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -617,6 +625,8 @@ namespace PS5000A
             this.label14 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
+            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.textBoxUnitInfo = new System.Windows.Forms.TextBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.button7 = new System.Windows.Forms.Button();
@@ -645,12 +655,8 @@ namespace PS5000A
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button11 = new System.Windows.Forms.Button();
-            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
-            this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -759,6 +765,45 @@ namespace PS5000A
             this.tabPage2.Text = "Сбор данных";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(0, 268);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(128, 13);
+            this.label17.TabIndex = 39;
+            this.label17.Text = "Путь хранения замеров";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(3, 284);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(654, 20);
+            this.textBox3.TabIndex = 38;
+            this.textBox3.Text = "C:\\TEMP\\";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Checked = true;
+            this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox2.Location = new System.Drawing.Point(463, 21);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(169, 17);
+            this.checkBox2.TabIndex = 37;
+            this.checkBox2.Text = "Подавлять начальную часть";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(7, 78);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(102, 35);
+            this.button11.TabIndex = 36;
+            this.button11.Text = "Автоматический сбор данных";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
             // checkBox20
             // 
             this.checkBox20.AutoSize = true;
@@ -851,7 +896,7 @@ namespace PS5000A
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(100, 20);
             this.textBox10.TabIndex = 26;
-            this.textBox10.Text = "100000";
+            this.textBox10.Text = "60000";
             this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label14
@@ -903,6 +948,40 @@ namespace PS5000A
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Коммутация";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // checkedListBox2
+            // 
+            this.checkedListBox2.FormattingEnabled = true;
+            this.checkedListBox2.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"});
+            this.checkedListBox2.Location = new System.Drawing.Point(553, 65);
+            this.checkedListBox2.Name = "checkedListBox2";
+            this.checkedListBox2.Size = new System.Drawing.Size(54, 124);
+            this.checkedListBox2.TabIndex = 38;
+            // 
+            // checkedListBox1
+            // 
+            this.checkedListBox1.FormattingEnabled = true;
+            this.checkedListBox1.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"});
+            this.checkedListBox1.Location = new System.Drawing.Point(487, 65);
+            this.checkedListBox1.Name = "checkedListBox1";
+            this.checkedListBox1.Size = new System.Drawing.Size(54, 124);
+            this.checkedListBox1.TabIndex = 37;
             // 
             // textBoxUnitInfo
             // 
@@ -1087,6 +1166,8 @@ namespace PS5000A
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.checkBox4);
+            this.tabPage4.Controls.Add(this.checkBox3);
             this.tabPage4.Controls.Add(this.button10);
             this.tabPage4.Controls.Add(this.textBox2);
             this.tabPage4.Controls.Add(this.button9);
@@ -1156,78 +1237,29 @@ namespace PS5000A
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
-            // button11
+            // checkBox3
             // 
-            this.button11.Location = new System.Drawing.Point(7, 78);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(102, 35);
-            this.button11.TabIndex = 36;
-            this.button11.Text = "Автоматический сбор данных";
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Checked = true;
+            this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox3.Location = new System.Drawing.Point(282, 44);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(356, 17);
+            this.checkBox3.TabIndex = 3;
+            this.checkBox3.Text = "Применять бегущее среднее при автоматическом сборе данных";
+            this.checkBox3.UseVisualStyleBackColor = true;
             // 
-            // checkedListBox1
+            // checkBox4
             // 
-            this.checkedListBox1.FormattingEnabled = true;
-            this.checkedListBox1.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7"});
-            this.checkedListBox1.Location = new System.Drawing.Point(487, 65);
-            this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(54, 124);
-            this.checkedListBox1.TabIndex = 37;
-            // 
-            // checkedListBox2
-            // 
-            this.checkedListBox2.FormattingEnabled = true;
-            this.checkedListBox2.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7"});
-            this.checkedListBox2.Location = new System.Drawing.Point(553, 65);
-            this.checkedListBox2.Name = "checkedListBox2";
-            this.checkedListBox2.Size = new System.Drawing.Size(54, 124);
-            this.checkedListBox2.TabIndex = 38;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Checked = true;
-            this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox2.Location = new System.Drawing.Point(463, 21);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(169, 17);
-            this.checkBox2.TabIndex = 37;
-            this.checkBox2.Text = "Подавлять начальную часть";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(3, 284);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(654, 20);
-            this.textBox3.TabIndex = 38;
-            this.textBox3.Text = "C:\\TEMP\\";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(0, 268);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(128, 13);
-            this.label17.TabIndex = 39;
-            this.label17.Text = "Путь хранения замеров";
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Checked = true;
+            this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox4.Location = new System.Drawing.Point(215, 96);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(423, 17);
+            this.checkBox4.TabIndex = 4;
+            this.checkBox4.Text = "Применять устранение средней величины при автоматическом сборе данных";
+            this.checkBox4.UseVisualStyleBackColor = true;
             // 
             // PS5000ABlockForm
             // 
@@ -1284,9 +1316,7 @@ namespace PS5000A
             }
             if (stop_flag)
             {
-
                 save = 0; stop_flag = false;
-
             }
         }
 
@@ -1319,10 +1349,13 @@ namespace PS5000A
         }
         private void button2_Click(object sender, EventArgs e)
         {
-
             timer1.Enabled = true;
             CollectData();
-            if(checkBox2.Checked)              SuppressSpikes(arrA, int.Parse(textBox14.Text));
+            if (checkBox2.Checked)
+            {
+                SuppressSpikes(arrA, int.Parse(textBox14.Text));
+            }
+
             timer1.Enabled = false;
             Save2File(@"C:\Temp\Measurement.txt", arrA);
             // Visualase(Color.Red, arrA);
@@ -1373,7 +1406,7 @@ namespace PS5000A
         {
             Switch1 = new Switch();
             Switch1.OpenPort(listBox1.SelectedIndex);
-            Thread.Sleep(500);
+            while (Switch1.port.BytesToRead == 0) { Thread.Sleep(50); };
             textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
             switch_connected = true;
         }
@@ -1411,7 +1444,7 @@ namespace PS5000A
             RunAvg(ref arrA, int.Parse(textBox2.Text));
             Visualase(Color.Red, arrA);
             string path = String.Concat(@"C:\Temp\", DateTime.Now.ToString().Replace(':', '_'), "TempCapture.txt");
-             
+
             Save2File(path, arrA);
 
         }
@@ -1434,31 +1467,45 @@ namespace PS5000A
 
         private void button11_Click(object sender, EventArgs e)
         {
-           if( switch_connected  )
+            if (switch_connected)
             {
-                for (int i =  0; i < checkedListBox1.CheckedIndices.Count; i++ )
+                for (int i = 0; i < checkedListBox1.CheckedIndices.Count; i++)
                 {
                     int j = checkedListBox1.CheckedIndices[i];
-                    Switch1.SendCmd(0,j);
-                    Thread.Sleep(500);
                     textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
-
-
+                    Switch1.SendCmd(0, j);
+                    while (Switch1.port.BytesToRead == 0) { Thread.Sleep(50); };
+                    textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
                     for (int k = 0; k < checkedListBox2.CheckedIndices.Count; k++)
                     {
-                        int m = checkedListBox1.CheckedIndices[k];
-                        Switch1.SendCmd(1, m);
-                        Thread.Sleep(500);
-                        textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
 
-                        timer1.Enabled = true;
-                        CollectData();
-                        if (checkBox2.Checked) SuppressSpikes(arrA, int.Parse(textBox14.Text));
-                        timer1.Enabled = false;
-                        Save2File(@"C:\Temp\Measurement.txt", arrA);
+                        int m = checkedListBox2.CheckedIndices[k];
+                        if (m != j)
+                        {
+                            textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+                            Switch1.SendCmd(1, m);
+                            while (Switch1.port.BytesToRead == 0) { Thread.Sleep(50); };
+                            textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
 
+                            timer1.Enabled = true;
+                            CollectData();
+                            if (checkBox2.Checked)
+                            {
+                                SuppressSpikes(arrA, int.Parse(textBox14.Text));
+                            }
 
+                            if (checkBox3.Checked)
+                            {
+                                RunAvg(ref arrA, int.Parse(textBox2.Text));
+                            };
+                            if (checkBox4.Checked)
+                            {
+                                NoOffset(arrA);
+                            };
 
+                            timer1.Enabled = false;
+                            Save2File(String.Concat(textBox3.Text, CODES[j], "2", CODES[m], ".txt"), arrA);
+                        }
                     }
 
                 }
@@ -1469,7 +1516,7 @@ namespace PS5000A
         private void button10_Click(object sender, EventArgs e)
         {
             NoOffset(arrA);
-            string path = String.Concat(@"C:\Temp\", DateTime.Now.ToString().Replace(':', '_'), "TempCapture.txt");
+            string path = String.Concat(textBox3.Text, DateTime.Now.ToString().Replace(':', '_'), "TempCapture.txt");
 
             Save2File(path, arrA);
         }

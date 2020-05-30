@@ -89,11 +89,13 @@ namespace PS5000A
         public void SendCmd(int status /*старшая цифра - команда */, int addr /*младшая цифра - адресс */)
         {
             port.Write(status.ToString() + addr.ToString());
+            port.BaseStream.Flush();
         }
         //отправка команды ввиде строки
         public void SendCmd(string s)
         {
             port.Write(s);
+            port.BaseStream.Flush();
         }
         public void SetOut(int addr)
         {
