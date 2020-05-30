@@ -113,6 +113,7 @@ namespace PS5000A
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

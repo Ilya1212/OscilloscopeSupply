@@ -302,20 +302,22 @@ namespace PS5000A
         {
             if (!visualising_now)
             {
+                Bitmap box = new Bitmap(tabControl1.TabPages[5].Width, tabControl1.TabPages[5].Height);
+                Graphics g = Graphics.FromImage(box);
+                //                nPaint и e.Graphics
+                //Ещё лучше рисовать на PictureBox.Image
+                //Тогда
+                //g = Graphics.FromImage(pict.Image);
+
                 visualising_now = true;
                 //   tabControl1.TabPages[5].Invalidate();
-                Graphics e_ = tabControl1.TabPages[5].CreateGraphics();
+                //Graphics e_ = tabControl1.TabPages[5].CreateGraphics();
                 int sy = tabControl1.TabPages[5].Height;
                 int sx = tabControl1.TabPages[5].Width;
-
                 int l = data.Length;
                 double mult = (double)sx / (double)l;
-
                 Pen pp = new Pen(color);
-
                 double max_abs = 0;
-
-
                 for (int i = 0; i < sx - 1; i++)
                 {
                     if (max_abs < Math.Abs(data[(int)(i / mult)] - data[0]))
@@ -354,11 +356,11 @@ namespace PS5000A
                         int x1 = i + 1;
                         int y0 = (int)((data[(int)(i / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
                         int y1 = (int)((data[(int)((i + 1) / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
-
-                        e_.DrawLine(pp, x0, y0, x1, y1);
-
+                        g.DrawLine(pp, x0, y0, x1, y1);
                     }
                 }
+                pictureBox1.Image = box;
+
             }
             //Brush ff;
 
@@ -370,42 +372,53 @@ namespace PS5000A
             visualising_now = false;
         }
 
+        //private void Visualase(Color color, long[] data)
+        //{
+        //    //tabControl1.TabPages[5].Invalidate();
+        //    Graphics e_ = tabControl1.TabPages[5].CreateGraphics();
+        //    int sy = tabControl1.TabPages[5].Height;
+        //    int sx = tabControl1.TabPages[5].Width;
+        //    int l = data.Length;
+        //    double mult = (double)sx / (double)l;
+        //    Pen pp = new Pen(color);
+        //    double max_abs = 0;
+
+        //    for (int i = 0; i < sx - 1; i++)
+        //    {
+        //        if (max_abs < Math.Abs(data[(int)(i / mult)] - data[0]))
+        //        {
+        //            max_abs = Math.Abs(data[(int)(i / mult)] - data[0]);
+        //        }
+        //    }
+
+        //    //for (int i = 0; i < l - 1; i++)
+        //    //{
+        //    //    if (max_abs < Math.Abs(data[i] - data[0]))
+        //    //        max_abs = Math.Abs(data[i] - data[0]);
+        //    //}
+
+
+        //    for (int i = 0; i < sx - 1; i++)
+        //    {
+        //        int x0 = i;
+        //        int x1 = i + 1;
+        //        int y0 = (int)((data[(int)(i / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
+        //        int y1 = (int)((data[(int)((i + 1) / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
+        //        e_.DrawLine(pp, x0, y0, x1, y1);
+        //    }
+        //}
         private void Visualase(Color color, long[] data)
         {
-            //tabControl1.TabPages[5].Invalidate();
-            Graphics e_ = tabControl1.TabPages[5].CreateGraphics();
-            int sy = tabControl1.TabPages[5].Height;
-            int sx = tabControl1.TabPages[5].Width;
-            int l = data.Length;
-            double mult = (double)sx / (double)l;
-            Pen pp = new Pen(color);
-            double max_abs = 0;
-
-            for (int i = 0; i < sx - 1; i++)
+            if (!visualising_now)
             {
-                if (max_abs < Math.Abs(data[(int)(i / mult)] - data[0]))
+                double[] dadada = new double[data.Length];
+                for (int i = 0; i < data.Length; i++)
                 {
-                    max_abs = Math.Abs(data[(int)(i / mult)] - data[0]);
+                    dadada[i] = (double)data[i];
                 }
-            }
-
-            //for (int i = 0; i < l - 1; i++)
-            //{
-            //    if (max_abs < Math.Abs(data[i] - data[0]))
-            //        max_abs = Math.Abs(data[i] - data[0]);
-            //}
-
-
-            for (int i = 0; i < sx - 1; i++)
-            {
-                int x0 = i;
-                int x1 = i + 1;
-                int y0 = (int)((data[(int)(i / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
-                int y1 = (int)((data[(int)((i + 1) / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
-                e_.DrawLine(pp, x0, y0, x1, y1);
+                Visualase(color, dadada);
             }
         }
-
         private void start(uint sampleCountBefore = 50000, uint sampleCountAfter = 50000, int write_every = 100)
         {
             uint all_ = sampleCountAfter + sampleCountBefore;
@@ -648,6 +661,8 @@ namespace PS5000A
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.button10 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button9 = new System.Windows.Forms.Button();
@@ -655,13 +670,14 @@ namespace PS5000A
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -1178,6 +1194,30 @@ namespace PS5000A
             this.tabPage4.Text = "Предобработка";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Checked = true;
+            this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox4.Location = new System.Drawing.Point(215, 96);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(423, 17);
+            this.checkBox4.TabIndex = 4;
+            this.checkBox4.Text = "Применять устранение средней величины при автоматическом сборе данных";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Checked = true;
+            this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox3.Location = new System.Drawing.Point(282, 44);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(356, 17);
+            this.checkBox3.TabIndex = 3;
+            this.checkBox3.Text = "Применять бегущее среднее при автоматическом сборе данных";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
             // button10
             // 
             this.button10.Location = new System.Drawing.Point(24, 96);
@@ -1217,6 +1257,7 @@ namespace PS5000A
             // 
             // tabPage6
             // 
+            this.tabPage6.Controls.Add(this.pictureBox1);
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(660, 307);
@@ -1237,29 +1278,13 @@ namespace PS5000A
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
-            // checkBox3
+            // pictureBox1
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Checked = true;
-            this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox3.Location = new System.Drawing.Point(282, 44);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(356, 17);
-            this.checkBox3.TabIndex = 3;
-            this.checkBox3.Text = "Применять бегущее среднее при автоматическом сборе данных";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Checked = true;
-            this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox4.Location = new System.Drawing.Point(215, 96);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(423, 17);
-            this.checkBox4.TabIndex = 4;
-            this.checkBox4.Text = "Применять устранение средней величины при автоматическом сборе данных";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(660, 307);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // PS5000ABlockForm
             // 
@@ -1276,6 +1301,8 @@ namespace PS5000A
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
