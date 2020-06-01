@@ -21,29 +21,34 @@ namespace PS5000A
         private Switch Switch1;
         private bool stop_flag = false;
         private bool switch_connected = false;
-        private double oscilloscope_timestep = 0 ;
+        private double oscilloscope_timestep = 0;
         private string CODES = "ABCDEFGHIKJLMNOP";
-         
+
         private short _handle;
         public const int BUFFER_SIZE = 1024;
         public const int MAX_CHANNELS = 4;
         public const int QUAD_SCOPE = 4;
         public const int DUAL_SCOPE = 2;
-        private uint _timebase = 15; 
+        private uint _timebase = 15;
         private ushort[] inputRanges = { 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000 };
-        private bool _ready = false; 
+        private bool _ready = false;
         //private ChannelSettings[] _channelSettings;
-        private int _channelCount; 
-        private Imports.ps5000aBlockReady _callbackDelegate; 
+        private int _channelCount;
+        private Imports.ps5000aBlockReady _callbackDelegate;
         private double w0;
         private double w1;
         private int l;
         private short[] minBuffersA;
         private short[] maxBuffersA;
-        private long[] masA; 
-        private uint n = 10000;  
+        private long[] masA;
+        private uint n = 10000;
         private double dt_ = 104 * 1.0E-9;
-        private double[] arrA; 
+        private double[] arrA;
+        private double[] arrB;
+
+
+
+
 
         public PS5000ABlockForm(double w0_, double w1_, int l_)
         {
@@ -201,12 +206,12 @@ namespace PS5000A
 
 
             oscilloscope_timestep = double.Parse(textBox9.Text);
-            oscilloscope_timestep = (oscilloscope_timestep- 3.0)/ 62500000.0;
+            oscilloscope_timestep = (oscilloscope_timestep - 3.0) / 62500000.0;
 
 
 
 
-        StringBuilder UnitInfo = new StringBuilder(80);
+            StringBuilder UnitInfo = new StringBuilder(80);
 
             short handle;
 
@@ -269,7 +274,22 @@ namespace PS5000A
 
         private void Save2File(string filename, double[] data)
         {
-            
+
+            using (StreamWriter Writer = new StreamWriter(filename))
+            {
+                Writer.WriteLine(data.Length);
+                for (int i = 0; i < data.Length; i++)
+                {
+                    Writer.WriteLine(data[i].ToString().Replace(',', '.'));
+                }
+                Writer.Flush();
+                Writer.Close();
+            }
+        }
+
+        private void Save2File(string filename, Complex[] data)
+        {
+
             using (StreamWriter Writer = new StreamWriter(filename))
             {
                 //   Writer.WriteLine(data.Length);
@@ -281,7 +301,6 @@ namespace PS5000A
                 Writer.Close();
             }
         }
-
         private bool visualising_now = false;
 
         private void Visualase(Color color, double[] data, int page_num)
@@ -316,9 +335,9 @@ namespace PS5000A
                     //{
                     //    max_abs = Math.Abs(data[i] - data[0]);
                     //}
-                    if (max_abs < Math.Abs(data[i] ))
+                    if (max_abs < Math.Abs(data[i]))
                     {
-                        max_abs = Math.Abs(data[i] );
+                        max_abs = Math.Abs(data[i]);
                     }
 
                 }
@@ -357,16 +376,19 @@ namespace PS5000A
                 //    }
                 //}
                 //pictureBox1.Image = box;
-               if( max_abs!=0)
-                for (int i = 0; i < l - 1; i++)
+                if (max_abs != 0)
                 {
-                    int x0 = (int)((double)i * mult);
-                    int x1 = (int)((double)(i + 1) * mult);
-                    int y0 = sy - ((int)(data[i] / max_abs * (double)sy * 0.8 / 2+ (double)sy / 2.0));
-                    int y1 = sy - ((int)(data[i + 1] / max_abs * (double)sy * 0.8 / 2  + (double)sy / 2.0));
+                    for (int i = 0; i < l - 1; i++)
+                    {
+                        int x0 = (int)((double)i * mult);
+                        int x1 = (int)((double)(i + 1) * mult);
+                        int y0 = sy - ((int)(data[i] / max_abs * (double)sy * 0.8 / 2 + (double)sy / 2.0));
+                        int y1 = sy - ((int)(data[i + 1] / max_abs * (double)sy * 0.8 / 2 + (double)sy / 2.0));
 
-                    g.DrawLine(pp, x0, y0, x1, y1);
+                        g.DrawLine(pp, x0, y0, x1, y1);
+                    }
                 }
+
                 pictureBox1.Image = box;
 
             }
@@ -424,7 +446,7 @@ namespace PS5000A
                 {
                     dadada[i] = (double)data[i];
                 }
-                Visualase(color, dadada,5);
+                Visualase(color, dadada, 5);
             }
         }
         private void start(uint sampleCountBefore = 50000, uint sampleCountAfter = 50000, int write_every = 100)
@@ -628,23 +650,6 @@ namespace PS5000A
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label17 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.button11 = new System.Windows.Forms.Button();
-            this.checkBox20 = new System.Windows.Forms.CheckBox();
-            this.button8 = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.textBox14 = new System.Windows.Forms.TextBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.textBox13 = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.textBox11 = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
@@ -668,6 +673,31 @@ namespace PS5000A
             this.label2 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.button11 = new System.Windows.Forms.Button();
+            this.checkBox20 = new System.Windows.Forms.CheckBox();
+            this.button8 = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.textBox14 = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.textBox13 = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
@@ -675,15 +705,24 @@ namespace PS5000A
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button9 = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
+            this.button12 = new System.Windows.Forms.Button();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.textBox7 = new System.Windows.Forms.TextBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textBox12 = new System.Windows.Forms.TextBox();
+            this.label25 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.tabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -762,185 +801,6 @@ namespace PS5000A
             this.button1.Text = "Подключиться";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.label17);
-            this.tabPage2.Controls.Add(this.textBox3);
-            this.tabPage2.Controls.Add(this.checkBox2);
-            this.tabPage2.Controls.Add(this.button11);
-            this.tabPage2.Controls.Add(this.checkBox20);
-            this.tabPage2.Controls.Add(this.button8);
-            this.tabPage2.Controls.Add(this.checkBox1);
-            this.tabPage2.Controls.Add(this.textBox14);
-            this.tabPage2.Controls.Add(this.label21);
-            this.tabPage2.Controls.Add(this.textBox13);
-            this.tabPage2.Controls.Add(this.label20);
-            this.tabPage2.Controls.Add(this.label15);
-            this.tabPage2.Controls.Add(this.textBox11);
-            this.tabPage2.Controls.Add(this.textBox10);
-            this.tabPage2.Controls.Add(this.label14);
-            this.tabPage2.Controls.Add(this.button2);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(660, 307);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Сбор данных";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(0, 268);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(128, 13);
-            this.label17.TabIndex = 39;
-            this.label17.Text = "Путь хранения замеров";
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(3, 284);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(654, 20);
-            this.textBox3.TabIndex = 38;
-            this.textBox3.Text = "C:\\TEMP\\";
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Checked = true;
-            this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox2.Location = new System.Drawing.Point(463, 21);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(169, 17);
-            this.checkBox2.TabIndex = 37;
-            this.checkBox2.Text = "Подавлять начальную часть";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // button11
-            // 
-            this.button11.Location = new System.Drawing.Point(7, 78);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(102, 35);
-            this.button11.TabIndex = 36;
-            this.button11.Text = "Автоматический сбор данных";
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // checkBox20
-            // 
-            this.checkBox20.AutoSize = true;
-            this.checkBox20.Location = new System.Drawing.Point(11, 131);
-            this.checkBox20.Name = "checkBox20";
-            this.checkBox20.Size = new System.Drawing.Size(98, 17);
-            this.checkBox20.TabIndex = 35;
-            this.checkBox20.Text = "Визуализация";
-            this.checkBox20.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(7, 48);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(102, 23);
-            this.button8.TabIndex = 34;
-            this.button8.Text = "Стоп";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(228, 163);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(240, 17);
-            this.checkBox1.TabIndex = 33;
-            this.checkBox1.Text = "Ограничение полосы пропускания 20 МГц";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // textBox14
-            // 
-            this.textBox14.Location = new System.Drawing.Point(345, 21);
-            this.textBox14.Name = "textBox14";
-            this.textBox14.Size = new System.Drawing.Size(100, 20);
-            this.textBox14.TabIndex = 32;
-            this.textBox14.Text = "25100";
-            this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(225, 24);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(114, 13);
-            this.label21.TabIndex = 31;
-            this.label21.Text = "Число подавляемых ";
-            // 
-            // textBox13
-            // 
-            this.textBox13.Location = new System.Drawing.Point(345, 56);
-            this.textBox13.Name = "textBox13";
-            this.textBox13.Size = new System.Drawing.Size(100, 20);
-            this.textBox13.TabIndex = 30;
-            this.textBox13.Text = "25000";
-            this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(251, 59);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(88, 13);
-            this.label20.TabIndex = 29;
-            this.label20.Text = "Число шагов до";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(238, 131);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(101, 13);
-            this.label15.TabIndex = 28;
-            this.label15.Text = "Число усреднений";
-            // 
-            // textBox11
-            // 
-            this.textBox11.Location = new System.Drawing.Point(345, 128);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(100, 20);
-            this.textBox11.TabIndex = 27;
-            this.textBox11.Text = "100";
-            this.textBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox10
-            // 
-            this.textBox10.Location = new System.Drawing.Point(345, 93);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(100, 20);
-            this.textBox10.TabIndex = 26;
-            this.textBox10.Text = "60000";
-            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(233, 100);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(106, 13);
-            this.label14.TabIndex = 25;
-            this.label14.Text = "Число шагов после";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 18);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(103, 23);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Сбор данных";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // tabPage3
             // 
@@ -1188,6 +1048,266 @@ namespace PS5000A
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.textBox6);
+            this.tabPage2.Controls.Add(this.textBox5);
+            this.tabPage2.Controls.Add(this.textBox4);
+            this.tabPage2.Controls.Add(this.label22);
+            this.tabPage2.Controls.Add(this.label19);
+            this.tabPage2.Controls.Add(this.label18);
+            this.tabPage2.Controls.Add(this.checkBox6);
+            this.tabPage2.Controls.Add(this.checkBox5);
+            this.tabPage2.Controls.Add(this.label17);
+            this.tabPage2.Controls.Add(this.textBox3);
+            this.tabPage2.Controls.Add(this.checkBox2);
+            this.tabPage2.Controls.Add(this.button11);
+            this.tabPage2.Controls.Add(this.checkBox20);
+            this.tabPage2.Controls.Add(this.button8);
+            this.tabPage2.Controls.Add(this.checkBox1);
+            this.tabPage2.Controls.Add(this.textBox14);
+            this.tabPage2.Controls.Add(this.label21);
+            this.tabPage2.Controls.Add(this.textBox13);
+            this.tabPage2.Controls.Add(this.label20);
+            this.tabPage2.Controls.Add(this.label15);
+            this.tabPage2.Controls.Add(this.textBox11);
+            this.tabPage2.Controls.Add(this.textBox10);
+            this.tabPage2.Controls.Add(this.label14);
+            this.tabPage2.Controls.Add(this.button2);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(660, 307);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Сбор данных";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(194, 242);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(100, 20);
+            this.textBox6.TabIndex = 47;
+            this.textBox6.Text = "1200";
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(194, 218);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(100, 20);
+            this.textBox5.TabIndex = 46;
+            this.textBox5.Text = "250";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(194, 196);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(100, 20);
+            this.textBox4.TabIndex = 45;
+            this.textBox4.Text = "1000";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(8, 245);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(179, 13);
+            this.label22.TabIndex = 44;
+            this.label22.Text = "Количество шагов по частоте ПФ";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(8, 221);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(106, 13);
+            this.label19.TabIndex = 43;
+            this.label19.Text = "Шаг по частоте ПФ";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(8, 199);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(111, 13);
+            this.label18.TabIndex = 42;
+            this.label18.Text = "Нижняя частота ПФ";
+            // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Location = new System.Drawing.Point(11, 179);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(238, 17);
+            this.checkBox6.TabIndex = 41;
+            this.checkBox6.Text = "Если считается ПФ, то посчитать модуль";
+            this.checkBox6.UseVisualStyleBackColor = true;
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Location = new System.Drawing.Point(11, 155);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(88, 17);
+            this.checkBox5.TabIndex = 40;
+            this.checkBox5.Text = "Считать ПФ";
+            this.checkBox5.UseVisualStyleBackColor = true;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(0, 268);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(128, 13);
+            this.label17.TabIndex = 39;
+            this.label17.Text = "Путь хранения замеров";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(3, 284);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(654, 20);
+            this.textBox3.TabIndex = 38;
+            this.textBox3.Text = "C:\\TEMP\\";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Checked = true;
+            this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox2.Location = new System.Drawing.Point(463, 21);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(169, 17);
+            this.checkBox2.TabIndex = 37;
+            this.checkBox2.Text = "Подавлять начальную часть";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(7, 6);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(102, 35);
+            this.button11.TabIndex = 36;
+            this.button11.Text = "Автоматический сбор данных";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
+            // checkBox20
+            // 
+            this.checkBox20.AutoSize = true;
+            this.checkBox20.Location = new System.Drawing.Point(11, 131);
+            this.checkBox20.Name = "checkBox20";
+            this.checkBox20.Size = new System.Drawing.Size(98, 17);
+            this.checkBox20.TabIndex = 35;
+            this.checkBox20.Text = "Визуализация";
+            this.checkBox20.UseVisualStyleBackColor = true;
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(7, 48);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(102, 23);
+            this.button8.TabIndex = 34;
+            this.button8.Text = "Стоп";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(228, 154);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(240, 17);
+            this.checkBox1.TabIndex = 33;
+            this.checkBox1.Text = "Ограничение полосы пропускания 20 МГц";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // textBox14
+            // 
+            this.textBox14.Location = new System.Drawing.Point(345, 21);
+            this.textBox14.Name = "textBox14";
+            this.textBox14.Size = new System.Drawing.Size(100, 20);
+            this.textBox14.TabIndex = 32;
+            this.textBox14.Text = "25100";
+            this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(225, 24);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(114, 13);
+            this.label21.TabIndex = 31;
+            this.label21.Text = "Число подавляемых ";
+            // 
+            // textBox13
+            // 
+            this.textBox13.Location = new System.Drawing.Point(345, 56);
+            this.textBox13.Name = "textBox13";
+            this.textBox13.Size = new System.Drawing.Size(100, 20);
+            this.textBox13.TabIndex = 30;
+            this.textBox13.Text = "25000";
+            this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(251, 59);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(88, 13);
+            this.label20.TabIndex = 29;
+            this.label20.Text = "Число шагов до";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(238, 131);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(101, 13);
+            this.label15.TabIndex = 28;
+            this.label15.Text = "Число усреднений";
+            // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(345, 128);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(100, 20);
+            this.textBox11.TabIndex = 27;
+            this.textBox11.Text = "100";
+            this.textBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(345, 93);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(100, 20);
+            this.textBox10.TabIndex = 26;
+            this.textBox10.Text = "60000";
+            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(233, 100);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(106, 13);
+            this.label14.TabIndex = 25;
+            this.label14.Text = "Число шагов после";
+            // 
+            // button2
+            // 
+            this.button2.Enabled = false;
+            this.button2.Location = new System.Drawing.Point(529, 245);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(103, 23);
+            this.button2.TabIndex = 0;
+            this.button2.Text = "Сбор данных";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.checkBox4);
@@ -1207,7 +1327,7 @@ namespace PS5000A
             this.checkBox4.AutoSize = true;
             this.checkBox4.Checked = true;
             this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox4.Location = new System.Drawing.Point(215, 96);
+            this.checkBox4.Location = new System.Drawing.Point(229, 58);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(423, 17);
             this.checkBox4.TabIndex = 4;
@@ -1219,7 +1339,7 @@ namespace PS5000A
             this.checkBox3.AutoSize = true;
             this.checkBox3.Checked = true;
             this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox3.Location = new System.Drawing.Point(282, 44);
+            this.checkBox3.Location = new System.Drawing.Point(282, 25);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(356, 17);
             this.checkBox3.TabIndex = 3;
@@ -1228,7 +1348,7 @@ namespace PS5000A
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(24, 96);
+            this.button10.Location = new System.Drawing.Point(5, 57);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(132, 37);
             this.button10.TabIndex = 2;
@@ -1238,7 +1358,7 @@ namespace PS5000A
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(176, 44);
+            this.textBox2.Location = new System.Drawing.Point(157, 23);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 20);
             this.textBox2.TabIndex = 1;
@@ -1246,7 +1366,7 @@ namespace PS5000A
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(24, 35);
+            this.button9.Location = new System.Drawing.Point(5, 14);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(132, 37);
             this.button9.TabIndex = 0;
@@ -1256,12 +1376,72 @@ namespace PS5000A
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.textBox12);
+            this.tabPage5.Controls.Add(this.label25);
+            this.tabPage5.Controls.Add(this.checkBox7);
+            this.tabPage5.Controls.Add(this.button12);
+            this.tabPage5.Controls.Add(this.textBox8);
+            this.tabPage5.Controls.Add(this.label24);
+            this.tabPage5.Controls.Add(this.label23);
+            this.tabPage5.Controls.Add(this.textBox7);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Size = new System.Drawing.Size(660, 307);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Обработка";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // checkBox7
+            // 
+            this.checkBox7.AutoSize = true;
+            this.checkBox7.Location = new System.Drawing.Point(8, 143);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.Size = new System.Drawing.Size(241, 17);
+            this.checkBox7.TabIndex = 5;
+            this.checkBox7.Text = "Нормализовывать перед выводом в файл";
+            this.checkBox7.UseVisualStyleBackColor = true;
+            // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(8, 99);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(167, 23);
+            this.button12.TabIndex = 4;
+            this.button12.Text = "Построить разности";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(181, 40);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(476, 20);
+            this.textBox8.TabIndex = 3;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(5, 46);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(166, 13);
+            this.label24.TabIndex = 2;
+            this.label24.Text = "Папка с замерами с дефектом";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(5, 21);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(170, 13);
+            this.label23.TabIndex = 1;
+            this.label23.Text = "Папка с замерами без дефекта";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(181, 14);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(476, 20);
+            this.textBox7.TabIndex = 0;
             // 
             // tabPage6
             // 
@@ -1294,6 +1474,22 @@ namespace PS5000A
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
+            // textBox12
+            // 
+            this.textBox12.Location = new System.Drawing.Point(181, 66);
+            this.textBox12.Name = "textBox12";
+            this.textBox12.Size = new System.Drawing.Size(476, 20);
+            this.textBox12.TabIndex = 7;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(5, 72);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(178, 13);
+            this.label25.TabIndex = 6;
+            this.label25.Text = "Папка для сохранения разностей";
+            // 
             // PS5000ABlockForm
             // 
             this.ClientSize = new System.Drawing.Size(671, 358);
@@ -1303,12 +1499,14 @@ namespace PS5000A
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.tabPage6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -1344,7 +1542,7 @@ namespace PS5000A
                 {
                     break;
                 }
-                arrA[i] = (double)masA[i] / 2.0 / (double)uint.Parse(textBox11.Text)* inputRanges[comboRangeA.SelectedIndex]/ 65536.0;
+                arrA[i] = (double)masA[i] / 2.0 / (double)uint.Parse(textBox11.Text) * inputRanges[comboRangeA.SelectedIndex] / 65536.0;
 
 
             }
@@ -1474,7 +1672,7 @@ namespace PS5000A
         private void button9_Click(object sender, EventArgs e)
         {
             RunAvg(ref arrA, int.Parse(textBox2.Text));
-            Visualase(Color.Red, arrA,5);
+            Visualase(Color.Red, arrA, 5);
             string path = String.Concat(@"C:\Temp\", DateTime.Now.ToString().Replace(':', '_'), "TempCapture.txt");
 
             Save2File(path, arrA);
@@ -1485,7 +1683,7 @@ namespace PS5000A
         {
             if (arrA != null)
             {
-                Visualase(Color.Red, arrA,5);
+                Visualase(Color.Red, arrA, 5);
             }
         }
 
@@ -1493,7 +1691,7 @@ namespace PS5000A
         {
             if (arrA != null)
             {
-                Visualase(Color.Red, arrA,5);
+                Visualase(Color.Red, arrA, 5);
             }
         }
 
@@ -1534,18 +1732,14 @@ namespace PS5000A
                             {
                                 NoOffset(arrA);
                             };
-                            
-            
+
+
                             timer1.Enabled = false;
 
-                            //test furie
-                            //Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 1 * 1000, 0.25 * 1000, 1200);
-                            //double[] abs_f = new double[f.Length];
-                            //for (int k1 = 0; k1 < f.Length; k1++)
-                            //{
-                            //    abs_f[k1] = f[k1].Magnitude;
-                            //}
-                            // Visualase(Color.Red, abs_f, 5);
+
+
+
+                            //Visualase(Color.Red, abs_f, 5);
                             //Complex[] restored = FurieTransfReverse(f, oscilloscope_timestep, -oscilloscope_timestep *  double.Parse(textBox13.Text) , arrA.Length, 1 * 1000, 0.25 * 1000);
 
                             //Save2File(String.Concat(textBox3.Text,"raw_", CODES[j], "2", CODES[m], ".txt"), arrA);
@@ -1554,7 +1748,7 @@ namespace PS5000A
                             //    arrA[k1] = restored[k1].Real*2;//важно делать умножение на 2 так как интеграл по полубесконечному промежутку
                             //}
 
-                            
+
                             if (stop_flag)
                             {
                                 save = 0; stop_flag = false;
@@ -1565,11 +1759,79 @@ namespace PS5000A
                             Directory.CreateDirectory(dir);
                             string fn = String.Concat(CODES[j], "2", CODES[m], ".txt");
                             Save2File(String.Concat(dir, fn), arrA);
+
+                            if (checkBox5.Checked)
+                            {
+                                Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 1 * double.Parse(textBox4.Text), double.Parse(textBox5.Text), int.Parse(textBox6.Text));
+
+                                Save2File(String.Concat(dir, "f_", fn), f);
+                                if (checkBox6.Checked)
+                                {
+                                    double[] abs_f = new double[f.Length];
+                                    for (int k1 = 0; k1 < f.Length; k1++)
+                                    {
+                                        abs_f[k1] = f[k1].Magnitude;
+                                    }
+                                    Save2File(String.Concat(dir, "abs_f_", fn), abs_f);
+                                }
+                            }
                         }
                     }
-
                 }
+            }
+        }
 
+        private void button12_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < checkedListBox1.CheckedIndices.Count; i++)
+            {
+                int j = checkedListBox1.CheckedIndices[i];
+                for (int k = 0; k < checkedListBox2.CheckedIndices.Count; k++)
+                {
+                    int m = checkedListBox2.CheckedIndices[k];
+                    if (m != j)
+                    {
+                        string dir1 = String.Concat(textBox7.Text, "/", CODES[j], "/");
+                        string dir2 = String.Concat(textBox8.Text, "/", CODES[j], "/");
+                        string dir3 = String.Concat(textBox12.Text, "/", CODES[j], "/");
+
+                        string fn = String.Concat(CODES[j], "2", CODES[m], ".txt");
+                        StreamReader R1 = new StreamReader(String.Concat(dir1, fn));
+                        StreamReader R2 = new StreamReader(String.Concat(dir2, fn));
+                        int l1 = int.Parse(R1.ReadLine());
+                        int l2 = int.Parse(R2.ReadLine());
+                        int l = l1;
+                        if (l > l2)
+                        {
+                            l = l2;
+                        }
+
+                        Directory.CreateDirectory(dir3);
+
+                        using (StreamWriter Writer = new StreamWriter(String.Concat(dir3, fn)))
+                        {
+                            Writer.WriteLine(l);
+                            for (int n = 0; n < l; n++)
+                            {
+                                string s1 = R1.ReadLine().Replace('.', ',');
+                                double d1 = double.Parse(s1);
+                                string s2 = R2.ReadLine().Replace('.', ','); ;
+                                double d2 = double.Parse(s2);
+
+                                Writer.WriteLine((d1 - d2).ToString().Replace(',', '.'));
+                            }
+
+                            Writer.Flush();
+                            Writer.Close();
+                        }
+
+                        //while  (!(R1.EndOfStream || R2.EndOfStream  ))
+                        //    {
+                        //}
+
+
+                    }
+                }
             }
         }
 

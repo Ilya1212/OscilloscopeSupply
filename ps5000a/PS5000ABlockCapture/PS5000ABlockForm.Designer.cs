@@ -114,6 +114,22 @@ namespace PS5000A
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.CheckBox checkBox6;
+        private System.Windows.Forms.CheckBox checkBox5;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.CheckBox checkBox7;
+        private System.Windows.Forms.TextBox textBox12;
+        private System.Windows.Forms.Label label25;
     }
 }
 
