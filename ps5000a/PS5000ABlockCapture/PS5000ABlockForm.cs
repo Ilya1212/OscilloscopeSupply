@@ -21,47 +21,29 @@ namespace PS5000A
         private Switch Switch1;
         private bool stop_flag = false;
         private bool switch_connected = false;
-
+        private double oscilloscope_timestep = 0 ;
         private string CODES = "ABCDEFGHIKJLMNOP";
-
-        #region Поля
+         
         private short _handle;
         public const int BUFFER_SIZE = 1024;
         public const int MAX_CHANNELS = 4;
         public const int QUAD_SCOPE = 4;
         public const int DUAL_SCOPE = 2;
-        private uint _timebase = 15;
-        private short _oversample = 1;
-        private bool _scaleVoltages = true;
+        private uint _timebase = 15; 
         private ushort[] inputRanges = { 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000 };
-        private bool _ready = false;
-        private short _trig = 0;
-        private uint _trigAt = 0;
-        private int _sampleCount = 0;
-        private uint _startIndex = 0;
-        private bool _autoStop;
+        private bool _ready = false; 
         //private ChannelSettings[] _channelSettings;
-        private int _channelCount;
-        private Imports.Range _firstRange;
-        private Imports.Range _lastRange;
-        private int _digitalPorts;
-        private Imports.ps5000aBlockReady _callbackDelegate;
-        private string StreamFile = "stream.txt";
-        private string BlockFile = "block.txt";
+        private int _channelCount; 
+        private Imports.ps5000aBlockReady _callbackDelegate; 
         private double w0;
         private double w1;
         private int l;
         private short[] minBuffersA;
         private short[] maxBuffersA;
-        private long[] masA;
-        private double T0;
-        private double OffsetT;
-        private uint n = 10000;
-        private int time_scale;
-        private int countz = 100;
+        private long[] masA; 
+        private uint n = 10000;  
         private double dt_ = 104 * 1.0E-9;
-        private double[] arrA;
-        #endregion
+        private double[] arrA; 
 
         public PS5000ABlockForm(double w0_, double w1_, int l_)
         {
@@ -117,7 +99,7 @@ namespace PS5000A
             return result;
         }
 
-        private Complex[] FurieTransfReverse(double[] data, double dt, double t0, int nt, double f0, double df)
+        private Complex[] FurieTransfReverse(Complex[] data, double dt, double t0, int nt, double f0, double df)
         {
             double w0 = 2 * M_PI * f0;
             double dw = 2 * M_PI * df;
@@ -218,10 +200,13 @@ namespace PS5000A
         {
 
 
+            oscilloscope_timestep = double.Parse(textBox9.Text);
+            oscilloscope_timestep = (oscilloscope_timestep- 3.0)/ 62500000.0;
 
 
 
-            StringBuilder UnitInfo = new StringBuilder(80);
+
+        StringBuilder UnitInfo = new StringBuilder(80);
 
             short handle;
 
@@ -284,6 +269,7 @@ namespace PS5000A
 
         private void Save2File(string filename, double[] data)
         {
+            
             using (StreamWriter Writer = new StreamWriter(filename))
             {
                 //   Writer.WriteLine(data.Length);
@@ -298,11 +284,11 @@ namespace PS5000A
 
         private bool visualising_now = false;
 
-        private void Visualase(Color color, double[] data)
+        private void Visualase(Color color, double[] data, int page_num)
         {
             if (!visualising_now)
             {
-                Bitmap box = new Bitmap(tabControl1.TabPages[5].Width, tabControl1.TabPages[5].Height);
+                Bitmap box = new Bitmap(tabControl1.TabPages[page_num].Width, tabControl1.TabPages[page_num].Height);
                 Graphics g = Graphics.FromImage(box);
                 //                nPaint и e.Graphics
                 //Ещё лучше рисовать на PictureBox.Image
@@ -312,18 +298,29 @@ namespace PS5000A
                 visualising_now = true;
                 //   tabControl1.TabPages[5].Invalidate();
                 //Graphics e_ = tabControl1.TabPages[5].CreateGraphics();
-                int sy = tabControl1.TabPages[5].Height;
-                int sx = tabControl1.TabPages[5].Width;
+                int sy = tabControl1.TabPages[page_num].Height;
+                int sx = tabControl1.TabPages[page_num].Width;
                 int l = data.Length;
                 double mult = (double)sx / (double)l;
                 Pen pp = new Pen(color);
                 double max_abs = 0;
-                for (int i = 0; i < sx - 1; i++)
+                //for (int i = 0; i < sx - 1; i++)
+                for (int i = 0; i < l; i++)
                 {
-                    if (max_abs < Math.Abs(data[(int)(i / mult)] - data[0]))
+                    //if (max_abs < Math.Abs(data[(int)(i / mult)] - data[0]))
+                    //{
+                    //    max_abs = Math.Abs(data[(int)(i / mult)] - data[0]);
+                    //}
+
+                    //if (max_abs < Math.Abs(data[i] - data[0]))
+                    //{
+                    //    max_abs = Math.Abs(data[i] - data[0]);
+                    //}
+                    if (max_abs < Math.Abs(data[i] ))
                     {
-                        max_abs = Math.Abs(data[(int)(i / mult)] - data[0]);
+                        max_abs = Math.Abs(data[i] );
                     }
+
                 }
 
                 //for (int i = 0; i < l - 1; i++)
@@ -348,16 +345,27 @@ namespace PS5000A
 
                 //}
 
-                if (max_abs != 0)
+                //if (max_abs != 0)
+                //{
+                //    for (int i = 0; i < sx - 1; i++)
+                //    {
+                //        int x0 = i;
+                //        int x1 = i + 1;
+                //        int y0 = (int)((data[(int)(i / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
+                //        int y1 = (int)((data[(int)((i + 1) / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
+                //        g.DrawLine(pp, x0, y0, x1, y1);
+                //    }
+                //}
+                //pictureBox1.Image = box;
+               if( max_abs!=0)
+                for (int i = 0; i < l - 1; i++)
                 {
-                    for (int i = 0; i < sx - 1; i++)
-                    {
-                        int x0 = i;
-                        int x1 = i + 1;
-                        int y0 = (int)((data[(int)(i / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
-                        int y1 = (int)((data[(int)((i + 1) / mult)] - data[0]) / max_abs * (double)sy * 0.8 / 2.0 + (double)sy / 2.0);
-                        g.DrawLine(pp, x0, y0, x1, y1);
-                    }
+                    int x0 = (int)((double)i * mult);
+                    int x1 = (int)((double)(i + 1) * mult);
+                    int y0 = sy - ((int)(data[i] / max_abs * (double)sy * 0.8 / 2+ (double)sy / 2.0));
+                    int y1 = sy - ((int)(data[i + 1] / max_abs * (double)sy * 0.8 / 2  + (double)sy / 2.0));
+
+                    g.DrawLine(pp, x0, y0, x1, y1);
                 }
                 pictureBox1.Image = box;
 
@@ -416,7 +424,7 @@ namespace PS5000A
                 {
                     dadada[i] = (double)data[i];
                 }
-                Visualase(color, dadada);
+                Visualase(color, dadada,5);
             }
         }
         private void start(uint sampleCountBefore = 50000, uint sampleCountAfter = 50000, int write_every = 100)
@@ -668,9 +676,9 @@ namespace PS5000A
             this.button9 = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -683,8 +691,8 @@ namespace PS5000A
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage6);
@@ -1266,6 +1274,14 @@ namespace PS5000A
             this.tabPage6.UseVisualStyleBackColor = true;
             this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(660, 307);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
             // progressBar1
             // 
             this.progressBar1.Location = new System.Drawing.Point(7, 338);
@@ -1277,14 +1293,6 @@ namespace PS5000A
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(660, 307);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
             // 
             // PS5000ABlockForm
             // 
@@ -1315,7 +1323,6 @@ namespace PS5000A
         {
 
             masA = new long[uint.Parse(textBox13.Text) + uint.Parse(textBox10.Text)];
-
             arrA = new double[uint.Parse(textBox13.Text) + uint.Parse(textBox10.Text)];
             all = int.Parse(textBox11.Text);
             for (uint i = 0; i < uint.Parse(textBox11.Text); i++)
@@ -1324,7 +1331,6 @@ namespace PS5000A
                 {
                     break;
                 }
-
                 save = (int)i + 1;
                 start(uint.Parse(textBox13.Text), uint.Parse(textBox10.Text), 1);
                 if (checkBox20.Checked)
@@ -1338,13 +1344,12 @@ namespace PS5000A
                 {
                     break;
                 }
+                arrA[i] = (double)masA[i] / 2.0 / (double)uint.Parse(textBox11.Text)* inputRanges[comboRangeA.SelectedIndex]/ 65536.0;
 
-                arrA[i] = (double)masA[i] / 2.0 / (double)uint.Parse(textBox11.Text);
+
             }
-            if (stop_flag)
-            {
-                save = 0; stop_flag = false;
-            }
+
+
         }
 
         private double FindAvg(double[] data)
@@ -1433,7 +1438,7 @@ namespace PS5000A
         {
             Switch1 = new Switch();
             Switch1.OpenPort(listBox1.SelectedIndex);
-            while (Switch1.port.BytesToRead == 0) { Thread.Sleep(50); };
+            Thread.Sleep(500);
             textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
             switch_connected = true;
         }
@@ -1469,7 +1474,7 @@ namespace PS5000A
         private void button9_Click(object sender, EventArgs e)
         {
             RunAvg(ref arrA, int.Parse(textBox2.Text));
-            Visualase(Color.Red, arrA);
+            Visualase(Color.Red, arrA,5);
             string path = String.Concat(@"C:\Temp\", DateTime.Now.ToString().Replace(':', '_'), "TempCapture.txt");
 
             Save2File(path, arrA);
@@ -1480,7 +1485,7 @@ namespace PS5000A
         {
             if (arrA != null)
             {
-                Visualase(Color.Red, arrA);
+                Visualase(Color.Red, arrA,5);
             }
         }
 
@@ -1488,7 +1493,7 @@ namespace PS5000A
         {
             if (arrA != null)
             {
-                Visualase(Color.Red, arrA);
+                Visualase(Color.Red, arrA,5);
             }
         }
 
@@ -1529,9 +1534,37 @@ namespace PS5000A
                             {
                                 NoOffset(arrA);
                             };
-
+                            
+            
                             timer1.Enabled = false;
-                            Save2File(String.Concat(textBox3.Text, CODES[j], "2", CODES[m], ".txt"), arrA);
+
+                            //test furie
+                            //Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 1 * 1000, 0.25 * 1000, 1200);
+                            //double[] abs_f = new double[f.Length];
+                            //for (int k1 = 0; k1 < f.Length; k1++)
+                            //{
+                            //    abs_f[k1] = f[k1].Magnitude;
+                            //}
+                            // Visualase(Color.Red, abs_f, 5);
+                            //Complex[] restored = FurieTransfReverse(f, oscilloscope_timestep, -oscilloscope_timestep *  double.Parse(textBox13.Text) , arrA.Length, 1 * 1000, 0.25 * 1000);
+
+                            //Save2File(String.Concat(textBox3.Text,"raw_", CODES[j], "2", CODES[m], ".txt"), arrA);
+                            //for (int k1 = 0; k1 < restored.Length; k1++)
+                            //{
+                            //    arrA[k1] = restored[k1].Real*2;//важно делать умножение на 2 так как интеграл по полубесконечному промежутку
+                            //}
+
+                            
+                            if (stop_flag)
+                            {
+                                save = 0; stop_flag = false;
+                            }
+
+                            //   Save2File(String.Concat(textBox3.Text,"ft_", CODES[j], "2", CODES[m], ".txt"), abs_f);
+                            string dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            Directory.CreateDirectory(dir);
+                            string fn = String.Concat(CODES[j], "2", CODES[m], ".txt");
+                            Save2File(String.Concat(dir, fn), arrA);
                         }
                     }
 
