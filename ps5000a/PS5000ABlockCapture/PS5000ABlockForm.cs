@@ -35,38 +35,30 @@ namespace PS5000A
         //private ChannelSettings[] _channelSettings;
         private int _channelCount;
         private Imports.ps5000aBlockReady _callbackDelegate;
-        private double w0;
-        private double w1;
-        private int l;
         private short[] minBuffersA;
         private short[] maxBuffersA;
         private long[] masA;
         private uint n = 10000;
         private double dt_ = 104 * 1.0E-9;
         private double[] arrA;
-        private double[] arrB;
 
+        /*
+         * частоты от 0 Гц 10Mhz
+         * dt =10^-7
+         * df = 100;
+         */
+        //private Complex[] Transform_dataA;
 
-
-
-
-        public PS5000ABlockForm(double w0_, double w1_, int l_)
+        public PS5000ABlockForm()
         {
             InitializeComponent();
-            w0 = w0_;
-            w1 = w1_;
-            l = l_;
 
             comboRangeA.DataSource = System.Enum.GetValues(typeof(Imports.Range));
-
-
             progressBar1.Text = "Готов к работе";
-
             timer1.Interval = 300;
             timer1.Tick += new EventHandler(Timer1_Tick);
         }
 
-        private string[] filenames;
         private int all, save = 0;
         private void Timer1_Tick(object Sender, EventArgs e)
         {
@@ -76,13 +68,83 @@ namespace PS5000A
         }
 
         private const double M_PI = 3.1415926535897932384626433832795;
+        private void SaveFilter(string filename, double[] filter, double[] x_arg)
+        {
+            Complex[] buf = new Complex[x_arg.Length];
+            for (int i = 0; i < x_arg.Length; i++)
+            {
+                buf[i] = new Complex(x_arg[i], filter[i]);
+            }
+            Save2File(filename, buf);
+        }
+        private Complex[]  LoadFilter(string filename )
+        {
+            return LoadFromFileC(filename);
+        }
+        public double[] FuncMult(double[] f1, double f1dx, double f1x0, double[] filter, double[] x_arg)
+        {
+            double[] result = new double[f1.Length];
+            double mult = 0;
+            int j = 0;
+            for (int i = 0; i < f1.Length; i++)
+            {
+                double x = f1x0 + f1dx * (double)i;
+                if(x< x_arg[0])
+                {
+                    mult = x_arg[0];
+                }
+                while ((x_arg[j] < x) && (j < (x_arg.Length - 1)))
+                {
+                    j++;
+                }
+                if (j == (x_arg.Length - 1))
+                {
+                    mult = x_arg[j];
+                }
+                else
+                {
+                    double b = (filter[j + 1] - filter[j]) / (x_arg[j + 1] - x_arg[j]);
+                    double a = filter[j];
+                    double x_ = x - x_arg[j];
+                    mult = a + b * x_;
+                }
+                result[i] = mult * f1[i];
+            }
+            return result;
+        }
 
+        public Complex[] FuncMult(Complex[] f1, double f1dx, double f1x0, double[] filter, double[] x_arg)
+        {
+            Complex[] result = new Complex[f1.Length];
+            double mult = 0;
+            int j = 0;
+            for (int i = 0; i < f1.Length; i++)
+            {
+                double x = f1x0 + f1dx * (double)i;
+                while ((x_arg[j] < x) && (j < (x_arg.Length - 1)))
+                {
+                    j++;
+                }
+                if (j == (x_arg.Length - 1))
+                {
+                    mult = x_arg[j];
+                }
+                else
+                {
+                    double b = (filter[j + 1] - filter[j]) / (x_arg[j + 1] - x_arg[j]);
+                    double a = filter[j];
+                    double x_ = x - x_arg[j];
+                    mult = a + b * x_;
+                }
+                result[i] = mult * f1[i];
+            }
+            return result;
+        }
         private Complex[] FurieTransf(double[] data, double dt, double t0, double f0, double df, int nf)
         {
             double w0 = 2 * M_PI * f0;
             double dw = 2 * M_PI * df;
             double mult = Math.Sqrt(1.0 / 2.0 / M_PI);
-
             Complex[] result = new Complex[nf];
             double w = w0;
             int l = data.Length;
@@ -130,21 +192,14 @@ namespace PS5000A
             }
             return result;
         }
-        /// <summary>
-        /// Обратная связб от осциллографа
-        /// </summary>
-        /// <param name="handle"></param>
-        /// <param name="status"></param>
-        /// <param name="pVoid"></param>
+
         private void BlockCallback(short handle, short status, IntPtr pVoid)
-        {
-            // flag to say done reading data
+        {// flag to say done reading data
             if (status != (short)StatusCodes.PICO_CANCELLED)
             {
                 _ready = true;
             }
         }
-
 
         private uint SetTrigger(Imports.TriggerChannelProperties[] channelProperties,
             short nChannelProperties,
@@ -170,14 +225,12 @@ namespace PS5000A
             {
                 return status;
             }
-
             if (directions == null)
             {
                 directions = new Imports.ThresholdDirection[] { Imports.ThresholdDirection.None,
                                 Imports.ThresholdDirection.None, Imports.ThresholdDirection.None, Imports.ThresholdDirection.None,
                                 Imports.ThresholdDirection.None, Imports.ThresholdDirection.None};
             }
-
             status = Imports.SetTriggerChannelDirections(_handle,
                                                                directions[(int)Imports.Channel.ChannelA],
                                                                directions[(int)Imports.Channel.ChannelB],
@@ -189,14 +242,11 @@ namespace PS5000A
             {
                 return status;
             }
-
             status = Imports.SetTriggerDelay(_handle, delay);
-
             if (status != StatusCodes.PICO_OK)
             {
                 return status;
             }
-
             return status;
         }
 
@@ -208,13 +258,9 @@ namespace PS5000A
             oscilloscope_timestep = double.Parse(textBox9.Text);
             oscilloscope_timestep = (oscilloscope_timestep - 3.0) / 62500000.0;
 
-
-
-
             StringBuilder UnitInfo = new StringBuilder(80);
 
             short handle;
-
             string[] description = {
                            "Driver Version    ",
                            "USB Version       ",
@@ -228,7 +274,6 @@ namespace PS5000A
                          };
 
             Imports.DeviceResolution resolution = Imports.DeviceResolution.PS5000A_DR_16BIT;
-
 
             if (_handle > 0)
             {
@@ -274,7 +319,70 @@ namespace PS5000A
 
         private void Save2File(string filename, double[] data)
         {
+            using (StreamWriter Writer = new StreamWriter(filename))
+            {
+                Writer.WriteLine(data.Length);
+                for (int i = 0; i < data.Length; i++)
+                {
+                    Writer.WriteLine(data[i].ToString().Replace(',', '.'));
+                }
+                Writer.Flush();
+                Writer.Close();
+            }
+        }
+        private double[] LoadFromFile(string filename)
+        {
+            using (StreamReader Reader = new StreamReader(filename))
+            {
+                int l = int.Parse(Reader.ReadLine());
+                double[] A = new double[l];
+                for (int i = 0; i < l; i++)
+                {
+                    A[i] = double.Parse(Reader.ReadLine().Replace('.', ','));
+                }
+                Reader.Close();
+                return A;
+            }
+        }
+        private Complex[] LoadFromFileC(string filename)
+        {
+            using (StreamReader Reader = new StreamReader(filename))
+            {
+                int l = int.Parse(Reader.ReadLine());
+                Complex[] A = new Complex[l];
+                for (int i = 0; i < l; i++)
+                {
+                    A[i] = Str2Cmpl(Reader.ReadLine());
+                    //   A[i] = Complex.Parse(Reader.ReadLine().Replace('.', ','));
+                }
+                Reader.Close();
+                return A; 
+            }
+        }
 
+
+        double[] ExtractFilterArgs(Complex[] f)
+        {
+            double[] r = new double[f.Length];
+            for(int i = 0;i< f.Length; i++)
+            {
+                r[i] = f[i].Real;
+            }
+            return r;
+        }
+        double[] ExtractFilterVals(Complex[] f)
+        {
+            double[] r = new double[f.Length];
+            for (int i = 0; i < f.Length; i++)
+            {
+                r[i] = f[i].Imaginary;
+            }
+            return r;
+        }
+
+
+        private void Save2File(string filename, Complex[] data)
+        {
             using (StreamWriter Writer = new StreamWriter(filename))
             {
                 Writer.WriteLine(data.Length);
@@ -287,20 +395,34 @@ namespace PS5000A
             }
         }
 
-        private void Save2File(string filename, Complex[] data)
-        {
 
-            using (StreamWriter Writer = new StreamWriter(filename))
+        void SortFilterPoints(ref double[] x, ref double[] f)
+        {
+            int l = x.Length;
+            for(int  i = 0; i <l-1; i++)
             {
-                //   Writer.WriteLine(data.Length);
-                for (int i = 0; i < data.Length; i++)
+                double xmin = x[i];
+                int index = i;
+                for (int j = i+1; j < l; j++)
                 {
-                    Writer.WriteLine(data[i].ToString().Replace(',', '.'));
+                    if( xmin> f[j])
+                    {
+                        xmin = f[j];
+                        index =  j ;
+                    }
                 }
-                Writer.Flush();
-                Writer.Close();
+                if(index!=i)
+                {
+                    double x_ = x[index];
+                    double f_ = f[index];
+                    x[index] = x[i];
+                    f[index] = f[i];
+                    x[i]= x_;
+                    f[i] = f_;
+                }
             }
         }
+
         private bool visualising_now = false;
 
         private void Visualase(Color color, double[] data, int page_num)
@@ -309,10 +431,6 @@ namespace PS5000A
             {
                 Bitmap box = new Bitmap(tabControl1.TabPages[page_num].Width, tabControl1.TabPages[page_num].Height);
                 Graphics g = Graphics.FromImage(box);
-                //                nPaint и e.Graphics
-                //Ещё лучше рисовать на PictureBox.Image
-                //Тогда
-                //g = Graphics.FromImage(pict.Image);
 
                 visualising_now = true;
                 //   tabControl1.TabPages[5].Invalidate();
@@ -330,7 +448,6 @@ namespace PS5000A
                     //{
                     //    max_abs = Math.Abs(data[(int)(i / mult)] - data[0]);
                     //}
-
                     //if (max_abs < Math.Abs(data[i] - data[0]))
                     //{
                     //    max_abs = Math.Abs(data[i] - data[0]);
@@ -339,7 +456,6 @@ namespace PS5000A
                     {
                         max_abs = Math.Abs(data[i]);
                     }
-
                 }
 
                 //for (int i = 0; i < l - 1; i++)
@@ -348,22 +464,16 @@ namespace PS5000A
                 //    int x1 = (int)((double)(i + 1) * mult);
                 //    int y0 = (int)(data[i] / 65535.0 * (double)sy * 0.8 / 2 * 100 + (double)sy / 2.0);
                 //    int y1 = (int)(data[i + 1] / 65535.0 * (double)sy * 0.8 / 2 * 100 + (double)sy / 2.0);
-
                 //    e_.DrawLine(pp, x0, y0, x1, y1);
-
                 //}
-
                 //    for (int i = 0; i < sx - 1; i++)
                 //{
                 //    int x0 = (int)((double)i * mult);
                 //    int x1 = (int)((double)(i + 1) * mult);
                 //    int y0 = (int)((data[i] - 32768 )/ max_abs * (double)sy * 0.8 / 2.0  + (double)sy / 2.0);
                 //    int y1 = (int)((data[i + 1] - 32768 )/ max_abs * (double)sy * 0.8 / 2.0  + (double)sy / 2.0);
-
                 //    e_.DrawLine(pp, x0, y0, x1, y1);
-
                 //}
-
                 //if (max_abs != 0)
                 //{
                 //    for (int i = 0; i < sx - 1; i++)
@@ -393,9 +503,7 @@ namespace PS5000A
 
             }
             //Brush ff;
-
             //e_.FillPolygon()
-
             //Graphics g = this.CreateGraphics();
             //g.DrawLine(new Pen(Color.Red), 0, 0, 100, 100);
 
@@ -552,94 +660,6 @@ namespace PS5000A
             Application.DoEvents();
         }
 
-
-
-        ////////////////private void button1_Click(object sender, EventArgs e)
-        ////////////////{
-        ////////////////    textBoxUnitInfo.AppendText(Switch_.GetAccepted() + "\n");
-        ////////////////    // await Task.Delay(500);
-        ////////////////    Switch_.SendCmd(0, listBox2.SelectedIndex);
-        ////////////////    //await Task.Delay(500);
-        ////////////////    textBoxUnitInfo.AppendText(Switch_.GetAccepted() + "\n");
-        ////////////////}
-
-        ////////////////private void button5_Click(object sender, EventArgs e)
-        ////////////////{
-        ////////////////    textBoxUnitInfo.AppendText(Switch_.GetAccepted() + "\n");
-        ////////////////    //await Task.Delay(500);
-        ////////////////    Switch_.SendCmd(1, listBox2.SelectedIndex);
-        ////////////////    textBoxUnitInfo.AppendText(Switch_.GetAccepted() + "\n");
-        ////////////////}
-
-
-
-
-
-
-
-
-
-        /*
-         * 
-         * частоты от 0 Гц 10Mhz
-         * dt =10^-7
-         * df = 100;
-         *
-         */
-        private Complex[] Transform_dataA;
-
-        private async void CalcTransform(double f0, double f1, int sc)
-        {
-            double fl = f1 - f0;
-            double df = (f1 - f0) / (sc - 1);
-            int count_approx = sc;
-            Transform_dataA = new Complex[count_approx];
-
-            all = sc;
-            timer1.Start();
-            await Task.Run(() =>
-            {
-                for (int j = 0; j < count_approx; j++)
-                {
-                    save = j;
-                    //if ((j % 100) == 0)     textData.AppendText($"{j} / {count_approx}\n");
-                    for (int j1 = 0; j1 < n; j1++)
-                    {
-                        Complex buf = new Complex(0, (f0 + df * j) * j1 * dt_ * 2 * Math.PI);
-                        Transform_dataA[j] += arrA[j1] * Complex.Exp(buf) * dt_;
-                    }
-                }
-            });
-            timer1.Stop();
-            progressBar1.Text = "Преобразование завершено. Данные записываются в файл";
-
-            //  string filename = filenames[0]; 
-            //первый 
-            using (StreamWriter fs = new StreamWriter(filenames[0]))
-            {
-                fs.WriteLine("w Re(f(w)) Im(f(w))");
-                for (int i = 0; i < count_approx; i++)
-                {
-                    //if ((i%100 )==0)   textData.AppendText($"{i} / {count_approx}\n");
-
-                    double freq = (f0 + df * i) * 2 * Math.PI * 1.0E-6;
-
-                    fs.WriteLine(freq + " " + Transform_dataA[i].Real + " " + Transform_dataA[i].Imaginary);
-                }
-
-            }
-            string filename2 = "TransA.txt";
-            using (StreamWriter fs = new StreamWriter(filename2))
-            {
-                for (int i = 0; i < count_approx; i++)
-                {
-                    //if ((i % 100) == 0) textData.AppendText($"{i} / {count_approx}\n");
-                    fs.WriteLine((f0 + df * i).ToString() + " " + Transform_dataA[i].Magnitude.ToString());
-                }
-            }
-
-        }
-
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
@@ -705,6 +725,8 @@ namespace PS5000A
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button9 = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.textBox12 = new System.Windows.Forms.TextBox();
+            this.label25 = new System.Windows.Forms.Label();
             this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.button12 = new System.Windows.Forms.Button();
             this.textBox8 = new System.Windows.Forms.TextBox();
@@ -715,8 +737,7 @@ namespace PS5000A
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.textBox12 = new System.Windows.Forms.TextBox();
-            this.label25 = new System.Windows.Forms.Label();
+            this.button13 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -744,6 +765,7 @@ namespace PS5000A
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.button13);
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.comboRangeA);
             this.tabPage1.Controls.Add(this.textBox9);
@@ -1391,6 +1413,22 @@ namespace PS5000A
             this.tabPage5.Text = "Обработка";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // textBox12
+            // 
+            this.textBox12.Location = new System.Drawing.Point(181, 66);
+            this.textBox12.Name = "textBox12";
+            this.textBox12.Size = new System.Drawing.Size(476, 20);
+            this.textBox12.TabIndex = 7;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(5, 72);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(178, 13);
+            this.label25.TabIndex = 6;
+            this.label25.Text = "Папка для сохранения разностей";
+            // 
             // checkBox7
             // 
             this.checkBox7.AutoSize = true;
@@ -1474,21 +1512,15 @@ namespace PS5000A
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
-            // textBox12
+            // button13
             // 
-            this.textBox12.Location = new System.Drawing.Point(181, 66);
-            this.textBox12.Name = "textBox12";
-            this.textBox12.Size = new System.Drawing.Size(476, 20);
-            this.textBox12.TabIndex = 7;
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(5, 72);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(178, 13);
-            this.label25.TabIndex = 6;
-            this.label25.Text = "Папка для сохранения разностей";
+            this.button13.Location = new System.Drawing.Point(355, 192);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(75, 23);
+            this.button13.TabIndex = 27;
+            this.button13.Text = "button13";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // PS5000ABlockForm
             // 
@@ -1736,9 +1768,6 @@ namespace PS5000A
 
                             timer1.Enabled = false;
 
-
-
-
                             //Visualase(Color.Red, abs_f, 5);
                             //Complex[] restored = FurieTransfReverse(f, oscilloscope_timestep, -oscilloscope_timestep *  double.Parse(textBox13.Text) , arrA.Length, 1 * 1000, 0.25 * 1000);
 
@@ -1747,7 +1776,6 @@ namespace PS5000A
                             //{
                             //    arrA[k1] = restored[k1].Real*2;//важно делать умножение на 2 так как интеграл по полубесконечному промежутку
                             //}
-
 
                             if (stop_flag)
                             {
@@ -1762,8 +1790,8 @@ namespace PS5000A
 
                             if (checkBox5.Checked)
                             {
-                                Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 1 * double.Parse(textBox4.Text), double.Parse(textBox5.Text), int.Parse(textBox6.Text));
 
+                                Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 1 * double.Parse(textBox4.Text), double.Parse(textBox5.Text), int.Parse(textBox6.Text));
                                 Save2File(String.Concat(dir, "f_", fn), f);
                                 if (checkBox6.Checked)
                                 {
@@ -1774,6 +1802,7 @@ namespace PS5000A
                                     }
                                     Save2File(String.Concat(dir, "abs_f_", fn), abs_f);
                                 }
+
                             }
                         }
                     }
@@ -1794,7 +1823,6 @@ namespace PS5000A
                         string dir1 = String.Concat(textBox7.Text, "/", CODES[j], "/");
                         string dir2 = String.Concat(textBox8.Text, "/", CODES[j], "/");
                         string dir3 = String.Concat(textBox12.Text, "/", CODES[j], "/");
-
                         string fn = String.Concat(CODES[j], "2", CODES[m], ".txt");
                         StreamReader R1 = new StreamReader(String.Concat(dir1, fn));
                         StreamReader R2 = new StreamReader(String.Concat(dir2, fn));
@@ -1805,9 +1833,7 @@ namespace PS5000A
                         {
                             l = l2;
                         }
-
                         Directory.CreateDirectory(dir3);
-
                         using (StreamWriter Writer = new StreamWriter(String.Concat(dir3, fn)))
                         {
                             Writer.WriteLine(l);
@@ -1817,33 +1843,45 @@ namespace PS5000A
                                 double d1 = double.Parse(s1);
                                 string s2 = R2.ReadLine().Replace('.', ','); ;
                                 double d2 = double.Parse(s2);
-
                                 Writer.WriteLine((d1 - d2).ToString().Replace(',', '.'));
                             }
 
                             Writer.Flush();
                             Writer.Close();
                         }
-
                         //while  (!(R1.EndOfStream || R2.EndOfStream  ))
                         //    {
                         //}
-
-
                     }
                 }
             }
+        }
+
+        private Complex Str2Cmpl(string s)
+        {
+            int pos = s.IndexOf(". ");
+            string s1 = s.Substring(1, pos-1).Replace('.', ',');
+            string s2 = s.Substring(pos+1, s.Length - pos-2).Replace('.', ',');
+            Complex r = new Complex(double.Parse(s1), double.Parse(s2));
+            return r;
+
+        }
+        private void button13_Click(object sender, EventArgs e)
+        {
+            double[] filtr = { 1.1, 0.4, 111111.7 };
+            double[] xxzx = { 1111111.1, 2.1, 3.2 };
+            SaveFilter(@"C:\TEMP\fff.txt", filtr, xxzx);
+            Complex[] cc = LoadFromFileC(@"C:\TEMP\fff.txt");
+
+
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
             NoOffset(arrA);
             string path = String.Concat(textBox3.Text, DateTime.Now.ToString().Replace(':', '_'), "TempCapture.txt");
-
             Save2File(path, arrA);
         }
-
-
 
     }
 }

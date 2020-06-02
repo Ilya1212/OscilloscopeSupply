@@ -11,7 +11,7 @@ namespace PS5000A
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new PS5000ABlockForm(0.034, 3.4, 600));
+            Application.Run(new PS5000ABlockForm());
         }
     }
 }

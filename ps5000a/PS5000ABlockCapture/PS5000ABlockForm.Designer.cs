@@ -130,6 +130,7 @@ namespace PS5000A
         private System.Windows.Forms.CheckBox checkBox7;
         private System.Windows.Forms.TextBox textBox12;
         private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Button button13;
     }
 }
 
