@@ -77,7 +77,7 @@ namespace PS5000A
             }
             Save2File(filename, buf);
         }
-        private Complex[]  LoadFilter(string filename )
+        private Complex[] LoadFilter(string filename)
         {
             return LoadFromFileC(filename);
         }
@@ -89,7 +89,7 @@ namespace PS5000A
             for (int i = 0; i < f1.Length; i++)
             {
                 double x = f1x0 + f1dx * (double)i;
-                if(x< x_arg[0])
+                if (x < x_arg[0])
                 {
                     mult = x_arg[0];
                 }
@@ -107,6 +107,61 @@ namespace PS5000A
                     double a = filter[j];
                     double x_ = x - x_arg[j];
                     mult = a + b * x_;
+                }
+                result[i] = mult * f1[i];
+            }
+            return result;
+        }
+
+        //единственная дебажная версия
+
+        public double[] FuncMult(double[] f1, double f1dx, double f1x0, Complex[] filter)
+        {
+            double[] result = new double[f1.Length];
+            double mult = 0;
+            int j = 0;
+            for (int i = 0; i < f1.Length; i++)
+            {
+                double x = f1x0 + f1dx * (double)i;
+                if (x < filter[0].Real)
+                {
+                    mult = filter[0].Imaginary;
+                }
+                else
+                {
+                    if (x > filter[filter.Length - 1].Real)
+                    {
+                        mult = filter[filter.Length - 1].Imaginary;
+                    }
+
+                    else
+                    {
+
+                        //============================================================================
+                        //где нарушена логика, надо переписать
+                        //============================================================================
+
+                        //while ((filter[j].Real < x) && (j < (filter.Length - 1)))
+                        //{
+                        //    j++;
+                        //}
+                        //if (j == (filter.Length - 1))
+                        //{
+                        //    mult = filter[j].Real;
+                        //}
+                        //else
+                        //{
+                        //    double b = (filter[j + 1].Imaginary - filter[j].Imaginary) / (filter[j + 1].Real - filter[j].Real);
+                        //    double a = filter[j].Imaginary;
+                        //    double x_ = x - filter[j].Real;
+                        //    mult = a + b * x_;
+                        //}
+                    }
+                }
+
+                if (mult != 1)
+                {
+                    mult = mult * mult;
                 }
                 result[i] = mult * f1[i];
             }
@@ -140,6 +195,50 @@ namespace PS5000A
             }
             return result;
         }
+
+        public Complex[] FuncMult(Complex[] f1, double f1dx, double f1x0, Complex[] filter)
+        {
+            Complex[] result = new Complex[f1.Length];
+            double mult = 0;
+            int j = 0;
+            for (int i = 0; i < f1.Length; i++)
+            {
+                double x = f1x0 + f1dx * (double)i;
+                if (x < filter[0].Real)
+                {
+                    mult = filter[0].Imaginary;
+                }
+                else
+                if (x > filter[filter.Length - 1].Real)
+                {
+                    mult = filter[filter.Length - 1].Imaginary;
+                }
+                else
+                {
+                    while ((filter[j].Real < x) && (j < (filter.Length - 1)))
+                    {
+                        j++;
+                    }
+                    if (j == (filter.Length - 1))
+                    {
+                        mult = filter[j].Real;
+                    }
+                    else
+                    {
+                        double b = (filter[j + 1].Imaginary - filter[j].Imaginary) / (filter[j + 1].Real - filter[j].Real);// тут где то косяк
+                        double a = filter[j].Imaginary;
+                        double x_ = x - filter[j].Real;
+                        mult = a + b * x_;
+                    }
+                }
+                Complex Cmult = new Complex(mult, 0);
+                result[i] = f1[i] * Cmult;
+            }
+            return result;
+        }
+
+
+
         private Complex[] FurieTransf(double[] data, double dt, double t0, double f0, double df, int nf)
         {
             double w0 = 2 * M_PI * f0;
@@ -356,21 +455,21 @@ namespace PS5000A
                     //   A[i] = Complex.Parse(Reader.ReadLine().Replace('.', ','));
                 }
                 Reader.Close();
-                return A; 
+                return A;
             }
         }
 
-
-        double[] ExtractFilterArgs(Complex[] f)
+        private double[] ExtractFilterArgs(Complex[] f)
         {
             double[] r = new double[f.Length];
-            for(int i = 0;i< f.Length; i++)
+            for (int i = 0; i < f.Length; i++)
             {
                 r[i] = f[i].Real;
             }
             return r;
         }
-        double[] ExtractFilterVals(Complex[] f)
+
+        private double[] ExtractFilterVals(Complex[] f)
         {
             double[] r = new double[f.Length];
             for (int i = 0; i < f.Length; i++)
@@ -395,29 +494,28 @@ namespace PS5000A
             }
         }
 
-
-        void SortFilterPoints(ref double[] x, ref double[] f)
+        private void SortFilterPoints(ref double[] x, ref double[] f)
         {
             int l = x.Length;
-            for(int  i = 0; i <l-1; i++)
+            for (int i = 0; i < l - 1; i++)
             {
                 double xmin = x[i];
                 int index = i;
-                for (int j = i+1; j < l; j++)
+                for (int j = i + 1; j < l; j++)
                 {
-                    if( xmin> f[j])
+                    if (xmin > f[j])
                     {
                         xmin = f[j];
-                        index =  j ;
+                        index = j;
                     }
                 }
-                if(index!=i)
+                if (index != i)
                 {
                     double x_ = x[index];
                     double f_ = f[index];
                     x[index] = x[i];
                     f[index] = f[i];
-                    x[i]= x_;
+                    x[i] = x_;
                     f[i] = f_;
                 }
             }
@@ -665,6 +763,7 @@ namespace PS5000A
             this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button13 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.comboRangeA = new System.Windows.Forms.ComboBox();
             this.textBox9 = new System.Windows.Forms.TextBox();
@@ -737,7 +836,11 @@ namespace PS5000A
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button13 = new System.Windows.Forms.Button();
+            this.checkBox8 = new System.Windows.Forms.CheckBox();
+            this.textBox15 = new System.Windows.Forms.TextBox();
+            this.checkBox9 = new System.Windows.Forms.CheckBox();
+            this.textBox16 = new System.Windows.Forms.TextBox();
+            this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -778,6 +881,16 @@ namespace PS5000A
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Подключение";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(355, 192);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(75, 23);
+            this.button13.TabIndex = 27;
+            this.button13.Text = "button13";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // label1
             // 
@@ -1072,6 +1185,7 @@ namespace PS5000A
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkBox10);
             this.tabPage2.Controls.Add(this.textBox6);
             this.tabPage2.Controls.Add(this.textBox5);
             this.tabPage2.Controls.Add(this.textBox4);
@@ -1332,6 +1446,10 @@ namespace PS5000A
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.textBox16);
+            this.tabPage4.Controls.Add(this.checkBox9);
+            this.tabPage4.Controls.Add(this.textBox15);
+            this.tabPage4.Controls.Add(this.checkBox8);
             this.tabPage4.Controls.Add(this.checkBox4);
             this.tabPage4.Controls.Add(this.checkBox3);
             this.tabPage4.Controls.Add(this.button10);
@@ -1512,15 +1630,54 @@ namespace PS5000A
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
-            // button13
+            // checkBox8
             // 
-            this.button13.Location = new System.Drawing.Point(355, 192);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(75, 23);
-            this.button13.TabIndex = 27;
-            this.button13.Text = "button13";
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
+            this.checkBox8.AutoSize = true;
+            this.checkBox8.Checked = true;
+            this.checkBox8.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox8.Location = new System.Drawing.Point(6, 111);
+            this.checkBox8.Name = "checkBox8";
+            this.checkBox8.Size = new System.Drawing.Size(251, 17);
+            this.checkBox8.TabIndex = 5;
+            this.checkBox8.Text = "Использовать фильтр в временной области";
+            this.checkBox8.UseVisualStyleBackColor = true;
+            // 
+            // textBox15
+            // 
+            this.textBox15.Location = new System.Drawing.Point(5, 134);
+            this.textBox15.Name = "textBox15";
+            this.textBox15.Size = new System.Drawing.Size(647, 20);
+            this.textBox15.TabIndex = 6;
+            this.textBox15.Text = "C:\\TEMP\\my_filter_t2.txt";
+            // 
+            // checkBox9
+            // 
+            this.checkBox9.AutoSize = true;
+            this.checkBox9.Location = new System.Drawing.Point(4, 161);
+            this.checkBox9.Name = "checkBox9";
+            this.checkBox9.Size = new System.Drawing.Size(246, 17);
+            this.checkBox9.TabIndex = 7;
+            this.checkBox9.Text = "Использовать фильтр в частотной области";
+            this.checkBox9.UseVisualStyleBackColor = true;
+            // 
+            // textBox16
+            // 
+            this.textBox16.Location = new System.Drawing.Point(6, 185);
+            this.textBox16.Name = "textBox16";
+            this.textBox16.Size = new System.Drawing.Size(646, 20);
+            this.textBox16.TabIndex = 8;
+            // 
+            // checkBox10
+            // 
+            this.checkBox10.AutoSize = true;
+            this.checkBox10.Checked = true;
+            this.checkBox10.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox10.Location = new System.Drawing.Point(463, 48);
+            this.checkBox10.Name = "checkBox10";
+            this.checkBox10.Size = new System.Drawing.Size(178, 17);
+            this.checkBox10.TabIndex = 48;
+            this.checkBox10.Text = "Сохранять файл с временами";
+            this.checkBox10.UseVisualStyleBackColor = true;
             // 
             // PS5000ABlockForm
             // 
@@ -1721,16 +1878,37 @@ namespace PS5000A
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (arrA != null)
-            {
-                Visualase(Color.Red, arrA, 5);
-            }
+            //if (arrA != null)
+            //{
+            //    Visualase(Color.Red, arrA, 5);
+            //}
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
             if (switch_connected)
             {
+                string dir = String.Concat(textBox3.Text, "/");
+                Directory.CreateDirectory(dir);
+
+                //==============================================================
+                //вывод файла с временами
+                if (checkBox10.Checked)
+                {
+                    int l = int.Parse(textBox10.Text) + int.Parse(textBox13.Text);
+                    double[] dt = new double[l];
+                    double n0 = double.Parse(textBox13.Text);
+                    for (int i = 0; i < l; i++)
+                    {
+                        dt[i] = oscilloscope_timestep * i - oscilloscope_timestep * n0;
+                    }
+                    string fn = "times.txt";
+                    Save2File(String.Concat(dir, fn), dt);
+                }
+
+                //==============================================================
+
+
                 for (int i = 0; i < checkedListBox1.CheckedIndices.Count; i++)
                 {
                     int j = checkedListBox1.CheckedIndices[i];
@@ -1755,7 +1933,6 @@ namespace PS5000A
                             {
                                 SuppressSpikes(arrA, int.Parse(textBox14.Text));
                             }
-
                             if (checkBox3.Checked)
                             {
                                 RunAvg(ref arrA, int.Parse(textBox2.Text));
@@ -1764,33 +1941,59 @@ namespace PS5000A
                             {
                                 NoOffset(arrA);
                             };
-
-
                             timer1.Enabled = false;
-
-                            //Visualase(Color.Red, abs_f, 5);
-                            //Complex[] restored = FurieTransfReverse(f, oscilloscope_timestep, -oscilloscope_timestep *  double.Parse(textBox13.Text) , arrA.Length, 1 * 1000, 0.25 * 1000);
-
-                            //Save2File(String.Concat(textBox3.Text,"raw_", CODES[j], "2", CODES[m], ".txt"), arrA);
-                            //for (int k1 = 0; k1 < restored.Length; k1++)
-                            //{
-                            //    arrA[k1] = restored[k1].Real*2;//важно делать умножение на 2 так как интеграл по полубесконечному промежутку
-                            //}
-
                             if (stop_flag)
                             {
                                 save = 0; stop_flag = false;
                             }
-
-                            //   Save2File(String.Concat(textBox3.Text,"ft_", CODES[j], "2", CODES[m], ".txt"), abs_f);
-                            string dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
                             Directory.CreateDirectory(dir);
-                            string fn = String.Concat(CODES[j], "2", CODES[m], ".txt");
+                            string fn = String.Concat("raw_", CODES[j], "2", CODES[m], ".txt");
+                            Save2File(String.Concat(dir, fn), arrA);
+                            //============================================================
+                            //вставить применение фильтра
+                            if (checkBox8.Checked)
+                            {
+                                if (textBox15.Text.Length > 0)
+                                {
+                                    Complex[] filtr = LoadFromFileC(textBox15.Text);
+                                    arrA = FuncMult(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), filtr);
+                                }
+                            }
+
+                            dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            Directory.CreateDirectory(dir);
+                            fn = String.Concat("afterf_", CODES[j], "2", CODES[m], ".txt");
+
                             Save2File(String.Concat(dir, fn), arrA);
 
+                            if (checkBox9.Checked)
+                            {
+                                if (textBox16.Text.Length > 0)
+                                {
+                                    Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 1 * double.Parse(textBox4.Text), double.Parse(textBox5.Text), int.Parse(textBox6.Text));
+                                    Complex[] filtr = LoadFromFileC(textBox16.Text);
+                                    f = FuncMult(f, double.Parse(textBox4.Text), double.Parse(textBox5.Text), filtr);
+                                    Complex[] restored = FurieTransfReverse(f, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), arrA.Length, double.Parse(textBox4.Text), double.Parse(textBox5.Text));
+                                    for (int k1 = 0; k1 < restored.Length; k1++)
+                                    {
+                                        arrA[k1] = restored[k1].Real * 2;//важно делать умножение на 2 так как интеграл по полубесконечному промежутку
+                                    }
+                                }
+                            }
+
+
+
+                            Visualase(Color.Red, arrA, 5);
+                            ///===========================================================
+
+                            //   Save2File(String.Concat(textBox3.Text,"ft_", CODES[j], "2", CODES[m], ".txt"), abs_f);
+                            dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            Directory.CreateDirectory(dir);
+                            fn = String.Concat(CODES[j], "2", CODES[m], ".txt");
+                            Save2File(String.Concat(dir, fn), arrA);
                             if (checkBox5.Checked)
                             {
-
                                 Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 1 * double.Parse(textBox4.Text), double.Parse(textBox5.Text), int.Parse(textBox6.Text));
                                 Save2File(String.Concat(dir, "f_", fn), f);
                                 if (checkBox6.Checked)
@@ -1860,8 +2063,8 @@ namespace PS5000A
         private Complex Str2Cmpl(string s)
         {
             int pos = s.IndexOf(". ");
-            string s1 = s.Substring(1, pos-1).Replace('.', ',');
-            string s2 = s.Substring(pos+1, s.Length - pos-2).Replace('.', ',');
+            string s1 = s.Substring(1, pos - 1).Replace('.', ',');
+            string s2 = s.Substring(pos + 1, s.Length - pos - 3).Replace('.', ',');
             Complex r = new Complex(double.Parse(s1), double.Parse(s2));
             return r;
 
