@@ -613,7 +613,7 @@ namespace PS5000A
 
             const short enable = 1;
             const uint delay = 0;
-            const short threshold = 25000;
+            const short threshold = 20000;
             const short auto = 22222;
             if (checkBox1.Checked)
             {
@@ -664,7 +664,7 @@ namespace PS5000A
             while (retry);
             while (!_ready)
             {
-                Thread.Sleep(30);
+              //  Thread.Sleep(1);
                 Application.DoEvents();
             }
             Imports.Stop(_handle);
@@ -699,7 +699,7 @@ namespace PS5000A
                 }
             }
 
-            Application.DoEvents();
+             Application.DoEvents();
         }
 
         private void InitializeComponent()
@@ -707,7 +707,6 @@ namespace PS5000A
             this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.button13 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.comboRangeA = new System.Windows.Forms.ComboBox();
             this.textBox9 = new System.Windows.Forms.TextBox();
@@ -812,7 +811,6 @@ namespace PS5000A
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.button13);
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.comboRangeA);
             this.tabPage1.Controls.Add(this.textBox9);
@@ -825,16 +823,6 @@ namespace PS5000A
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Подключение";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // button13
-            // 
-            this.button13.Location = new System.Drawing.Point(355, 192);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(75, 23);
-            this.button13.TabIndex = 27;
-            this.button13.Text = "button13";
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // label1
             // 
@@ -1228,6 +1216,8 @@ namespace PS5000A
             // checkBox6
             // 
             this.checkBox6.AutoSize = true;
+            this.checkBox6.Checked = true;
+            this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox6.Location = new System.Drawing.Point(11, 179);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(238, 17);
@@ -1238,6 +1228,8 @@ namespace PS5000A
             // checkBox5
             // 
             this.checkBox5.AutoSize = true;
+            this.checkBox5.Checked = true;
+            this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox5.Location = new System.Drawing.Point(11, 155);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(88, 17);
@@ -1287,6 +1279,8 @@ namespace PS5000A
             // checkBox20
             // 
             this.checkBox20.AutoSize = true;
+            this.checkBox20.Checked = true;
+            this.checkBox20.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox20.Location = new System.Drawing.Point(11, 131);
             this.checkBox20.Name = "checkBox20";
             this.checkBox20.Size = new System.Drawing.Size(98, 17);
@@ -1367,7 +1361,7 @@ namespace PS5000A
             this.textBox11.Name = "textBox11";
             this.textBox11.Size = new System.Drawing.Size(100, 20);
             this.textBox11.TabIndex = 27;
-            this.textBox11.Text = "100";
+            this.textBox11.Text = "400";
             this.textBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox10
@@ -1424,10 +1418,13 @@ namespace PS5000A
             this.textBox16.Name = "textBox16";
             this.textBox16.Size = new System.Drawing.Size(646, 20);
             this.textBox16.TabIndex = 8;
+            this.textBox16.Text = "C:\\Temp\\my_filter_f.txt";
             // 
             // checkBox9
             // 
             this.checkBox9.AutoSize = true;
+            this.checkBox9.Checked = true;
+            this.checkBox9.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox9.Location = new System.Drawing.Point(4, 161);
             this.checkBox9.Name = "checkBox9";
             this.checkBox9.Size = new System.Drawing.Size(246, 17);
@@ -1860,6 +1857,7 @@ namespace PS5000A
                     Switch1.SendCmd(0, j);
                     while (Switch1.port.BytesToRead == 0) { Thread.Sleep(50); };
                     textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+                   // Thread.Sleep(500);// подождем пока напряжение устаканится на ПЭ
                     for (int k = 0; k < checkedListBox2.CheckedIndices.Count; k++)
                     {
 
@@ -1905,9 +1903,12 @@ namespace PS5000A
                                 }
                             }
 
+                            //вставить фильтр по частоте
+
+
                             dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
                             Directory.CreateDirectory(dir);
-                            fn = String.Concat("afterf_", CODES[j], "2", CODES[m], ".txt");
+                            fn = String.Concat("afterf1_", CODES[j], "2", CODES[m], ".txt");
 
                             Save2File(String.Concat(dir, fn), arrA);
 
@@ -1915,9 +1916,10 @@ namespace PS5000A
                             {
                                 if (textBox16.Text.Length > 0)
                                 {
-                                    Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 1 * double.Parse(textBox4.Text), double.Parse(textBox5.Text), int.Parse(textBox6.Text));
+                                    Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 
+                                         double.Parse(textBox4.Text), double.Parse(textBox5.Text), int.Parse(textBox6.Text));
                                     Complex[] filtr = LoadFromFileC(textBox16.Text);
-                                    f = FuncMult(f, double.Parse(textBox4.Text), double.Parse(textBox5.Text), filtr);
+                                    f = FuncMult(f, double.Parse(textBox5.Text), double.Parse(textBox4.Text), filtr);
                                     Complex[] restored = FurieTransfReverse(f, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), arrA.Length, double.Parse(textBox4.Text), double.Parse(textBox5.Text));
                                     for (int k1 = 0; k1 < restored.Length; k1++)
                                     {
@@ -1925,6 +1927,10 @@ namespace PS5000A
                                     }
                                 }
                             }
+
+                            dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            Directory.CreateDirectory(dir);
+                            fn = String.Concat("afterf2_", CODES[j], "2", CODES[m], ".txt");
 
 
 
@@ -2015,12 +2021,7 @@ namespace PS5000A
         }
         private void button13_Click(object sender, EventArgs e)
         {
-            double[] filtr = { 1.1, 0.4, 111111.7 };
-            double[] xxzx = { 1111111.1, 2.1, 3.2 };
-            SaveFilter(@"C:\TEMP\fff.txt", filtr, xxzx);
-            Complex[] cc = LoadFromFileC(@"C:\TEMP\fff.txt");
-
-
+       
         }
 
         private void button10_Click(object sender, EventArgs e)
