@@ -81,40 +81,9 @@ namespace PS5000A
         {
             return LoadFromFileC(filename);
         }
-        public double[] FuncMult(double[] f1, double f1dx, double f1x0, double[] filter, double[] x_arg)
-        {
-            double[] result = new double[f1.Length];
-            double mult = 0;
-            int j = 0;
-            for (int i = 0; i < f1.Length; i++)
-            {
-                double x = f1x0 + f1dx * (double)i;
-                if (x < x_arg[0])
-                {
-                    mult = x_arg[0];
-                }
-                while ((x_arg[j] < x) && (j < (x_arg.Length - 1)))
-                {
-                    j++;
-                }
-                if (j == (x_arg.Length - 1))
-                {
-                    mult = x_arg[j];
-                }
-                else
-                {
-                    double b = (filter[j + 1] - filter[j]) / (x_arg[j + 1] - x_arg[j]);
-                    double a = filter[j];
-                    double x_ = x - x_arg[j];
-                    mult = a + b * x_;
-                }
-                result[i] = mult * f1[i];
-            }
-            return result;
-        }
 
         //единственная дебажная версия
-
+        //работает
         public double[] FuncMult(double[] f1, double f1dx, double f1x0, Complex[] filter)
         {
             double[] result = new double[f1.Length];
@@ -136,6 +105,16 @@ namespace PS5000A
 
                     else
                     {
+                        while (filter[j + 1].Real < x)
+                        {
+                            j++;
+                        }
+
+                        double a = filter[j].Imaginary;
+                        double b = (filter[j + 1].Imaginary - filter[j].Imaginary) / (filter[j + 1].Real - filter[j].Real);
+                        double x_ = x - filter[j].Real;
+                        mult = a + b * x_;
+
 
                         //============================================================================
                         //где нарушена логика, надо переписать
@@ -158,43 +137,11 @@ namespace PS5000A
                         //}
                     }
                 }
-
-                if (mult != 1)
-                {
-                    mult = mult * mult;
-                }
                 result[i] = mult * f1[i];
             }
             return result;
         }
 
-        public Complex[] FuncMult(Complex[] f1, double f1dx, double f1x0, double[] filter, double[] x_arg)
-        {
-            Complex[] result = new Complex[f1.Length];
-            double mult = 0;
-            int j = 0;
-            for (int i = 0; i < f1.Length; i++)
-            {
-                double x = f1x0 + f1dx * (double)i;
-                while ((x_arg[j] < x) && (j < (x_arg.Length - 1)))
-                {
-                    j++;
-                }
-                if (j == (x_arg.Length - 1))
-                {
-                    mult = x_arg[j];
-                }
-                else
-                {
-                    double b = (filter[j + 1] - filter[j]) / (x_arg[j + 1] - x_arg[j]);
-                    double a = filter[j];
-                    double x_ = x - x_arg[j];
-                    mult = a + b * x_;
-                }
-                result[i] = mult * f1[i];
-            }
-            return result;
-        }
 
         public Complex[] FuncMult(Complex[] f1, double f1dx, double f1x0, Complex[] filter)
         {
@@ -209,31 +156,28 @@ namespace PS5000A
                     mult = filter[0].Imaginary;
                 }
                 else
-                if (x > filter[filter.Length - 1].Real)
                 {
-                    mult = filter[filter.Length - 1].Imaginary;
-                }
-                else
-                {
-                    while ((filter[j].Real < x) && (j < (filter.Length - 1)))
+                    if (x > filter[filter.Length - 1].Real)
                     {
-                        j++;
+                        mult = filter[filter.Length - 1].Imaginary;
                     }
-                    if (j == (filter.Length - 1))
-                    {
-                        mult = filter[j].Real;
-                    }
+
                     else
                     {
-                        double b = (filter[j + 1].Imaginary - filter[j].Imaginary) / (filter[j + 1].Real - filter[j].Real);// тут где то косяк
+                        while (filter[j + 1].Real < x)
+                        {
+                            j++;
+                        }
+
                         double a = filter[j].Imaginary;
+                        double b = (filter[j + 1].Imaginary - filter[j].Imaginary) / (filter[j + 1].Real - filter[j].Real);
                         double x_ = x - filter[j].Real;
                         mult = a + b * x_;
                     }
                 }
-                Complex Cmult = new Complex(mult, 0);
-                result[i] = f1[i] * Cmult;
+                result[i] = mult * f1[i];
             }
+
             return result;
         }
 
@@ -793,6 +737,7 @@ namespace PS5000A
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
@@ -818,6 +763,10 @@ namespace PS5000A
             this.label14 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.textBox16 = new System.Windows.Forms.TextBox();
+            this.checkBox9 = new System.Windows.Forms.CheckBox();
+            this.textBox15 = new System.Windows.Forms.TextBox();
+            this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.button10 = new System.Windows.Forms.Button();
@@ -836,11 +785,6 @@ namespace PS5000A
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox8 = new System.Windows.Forms.CheckBox();
-            this.textBox15 = new System.Windows.Forms.TextBox();
-            this.checkBox9 = new System.Windows.Forms.CheckBox();
-            this.textBox16 = new System.Windows.Forms.TextBox();
-            this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -1218,6 +1162,18 @@ namespace PS5000A
             this.tabPage2.Text = "Сбор данных";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // checkBox10
+            // 
+            this.checkBox10.AutoSize = true;
+            this.checkBox10.Checked = true;
+            this.checkBox10.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox10.Location = new System.Drawing.Point(463, 48);
+            this.checkBox10.Name = "checkBox10";
+            this.checkBox10.Size = new System.Drawing.Size(178, 17);
+            this.checkBox10.TabIndex = 48;
+            this.checkBox10.Text = "Сохранять файл с временами";
+            this.checkBox10.UseVisualStyleBackColor = true;
+            // 
             // textBox6
             // 
             this.textBox6.Location = new System.Drawing.Point(194, 242);
@@ -1462,6 +1418,43 @@ namespace PS5000A
             this.tabPage4.Text = "Предобработка";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // textBox16
+            // 
+            this.textBox16.Location = new System.Drawing.Point(6, 185);
+            this.textBox16.Name = "textBox16";
+            this.textBox16.Size = new System.Drawing.Size(646, 20);
+            this.textBox16.TabIndex = 8;
+            // 
+            // checkBox9
+            // 
+            this.checkBox9.AutoSize = true;
+            this.checkBox9.Location = new System.Drawing.Point(4, 161);
+            this.checkBox9.Name = "checkBox9";
+            this.checkBox9.Size = new System.Drawing.Size(246, 17);
+            this.checkBox9.TabIndex = 7;
+            this.checkBox9.Text = "Использовать фильтр в частотной области";
+            this.checkBox9.UseVisualStyleBackColor = true;
+            // 
+            // textBox15
+            // 
+            this.textBox15.Location = new System.Drawing.Point(5, 134);
+            this.textBox15.Name = "textBox15";
+            this.textBox15.Size = new System.Drawing.Size(647, 20);
+            this.textBox15.TabIndex = 6;
+            this.textBox15.Text = "C:\\TEMP\\my_filter_t.txt";
+            // 
+            // checkBox8
+            // 
+            this.checkBox8.AutoSize = true;
+            this.checkBox8.Checked = true;
+            this.checkBox8.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox8.Location = new System.Drawing.Point(6, 111);
+            this.checkBox8.Name = "checkBox8";
+            this.checkBox8.Size = new System.Drawing.Size(251, 17);
+            this.checkBox8.TabIndex = 5;
+            this.checkBox8.Text = "Использовать фильтр в временной области";
+            this.checkBox8.UseVisualStyleBackColor = true;
+            // 
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
@@ -1629,55 +1622,6 @@ namespace PS5000A
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
-            // 
-            // checkBox8
-            // 
-            this.checkBox8.AutoSize = true;
-            this.checkBox8.Checked = true;
-            this.checkBox8.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox8.Location = new System.Drawing.Point(6, 111);
-            this.checkBox8.Name = "checkBox8";
-            this.checkBox8.Size = new System.Drawing.Size(251, 17);
-            this.checkBox8.TabIndex = 5;
-            this.checkBox8.Text = "Использовать фильтр в временной области";
-            this.checkBox8.UseVisualStyleBackColor = true;
-            // 
-            // textBox15
-            // 
-            this.textBox15.Location = new System.Drawing.Point(5, 134);
-            this.textBox15.Name = "textBox15";
-            this.textBox15.Size = new System.Drawing.Size(647, 20);
-            this.textBox15.TabIndex = 6;
-            this.textBox15.Text = "C:\\TEMP\\my_filter_t2.txt";
-            // 
-            // checkBox9
-            // 
-            this.checkBox9.AutoSize = true;
-            this.checkBox9.Location = new System.Drawing.Point(4, 161);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.Size = new System.Drawing.Size(246, 17);
-            this.checkBox9.TabIndex = 7;
-            this.checkBox9.Text = "Использовать фильтр в частотной области";
-            this.checkBox9.UseVisualStyleBackColor = true;
-            // 
-            // textBox16
-            // 
-            this.textBox16.Location = new System.Drawing.Point(6, 185);
-            this.textBox16.Name = "textBox16";
-            this.textBox16.Size = new System.Drawing.Size(646, 20);
-            this.textBox16.TabIndex = 8;
-            // 
-            // checkBox10
-            // 
-            this.checkBox10.AutoSize = true;
-            this.checkBox10.Checked = true;
-            this.checkBox10.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox10.Location = new System.Drawing.Point(463, 48);
-            this.checkBox10.Name = "checkBox10";
-            this.checkBox10.Size = new System.Drawing.Size(178, 17);
-            this.checkBox10.TabIndex = 48;
-            this.checkBox10.Text = "Сохранять файл с временами";
-            this.checkBox10.UseVisualStyleBackColor = true;
             // 
             // PS5000ABlockForm
             // 
