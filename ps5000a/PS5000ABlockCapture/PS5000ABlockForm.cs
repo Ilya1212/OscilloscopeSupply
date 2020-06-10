@@ -790,6 +790,7 @@ namespace PS5000A
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textBox17 = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -1520,6 +1521,7 @@ namespace PS5000A
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.textBox17);
             this.tabPage5.Controls.Add(this.textBox12);
             this.tabPage5.Controls.Add(this.label25);
             this.tabPage5.Controls.Add(this.checkBox7);
@@ -1633,6 +1635,15 @@ namespace PS5000A
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
+            // 
+            // textBox17
+            // 
+            this.textBox17.Location = new System.Drawing.Point(8, 172);
+            this.textBox17.Multiline = true;
+            this.textBox17.Name = "textBox17";
+            this.textBox17.Size = new System.Drawing.Size(674, 170);
+            this.textBox17.TabIndex = 8;
+            this.textBox17.Text = "Информация о построенном разностном замере";
             // 
             // PS5000ABlockForm
             // 
@@ -2000,6 +2011,19 @@ namespace PS5000A
 
         private void button12_Click(object sender, EventArgs e)
         {
+            try
+            {
+                //Создаём или перезаписываем существующий файл
+                StreamWriter sw = File.CreateText( String.Concat(textBox12.Text, "/","info.txt"));
+                //Записываем текст в поток файла
+                sw.WriteLine(textBox17.Text);
+                //Закрываем файл
+                sw.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show ("Error: " + ex.Message);
+            }
             for (int i = 0; i < checkedListBox1.CheckedIndices.Count; i++)
             {
                 int j = checkedListBox1.CheckedIndices[i];

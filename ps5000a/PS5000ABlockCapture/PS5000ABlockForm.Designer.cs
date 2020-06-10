@@ -135,6 +135,7 @@ namespace PS5000A
         private System.Windows.Forms.TextBox textBox15;
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.CheckBox checkBox10;
+        private System.Windows.Forms.TextBox textBox17;
     }
 }
 
