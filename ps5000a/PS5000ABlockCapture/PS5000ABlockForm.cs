@@ -297,14 +297,21 @@ namespace PS5000A
         private void button1_Click(object sender, EventArgs e)
         {
 
+            try
+            {
 
-            oscilloscope_timestep = double.Parse(textBox9.Text);
-            oscilloscope_timestep = (oscilloscope_timestep - 3.0) / 62500000.0;
+                oscilloscope_timestep = double.Parse(textBox9.Text);
+                if (oscilloscope_timestep < 4.0)
+                {
+                    throw new Exception();
+                }
 
-            StringBuilder UnitInfo = new StringBuilder(80);
+                oscilloscope_timestep = (oscilloscope_timestep - 3.0) / 62500000.0;
 
-            short handle;
-            string[] description = {
+                StringBuilder UnitInfo = new StringBuilder(80);
+
+                short handle;
+                string[] description = {
                            "Driver Version    ",
                            "USB Version       ",
                            "Hardware Version  ",
@@ -316,47 +323,46 @@ namespace PS5000A
                            "Analogue Hardware "
                          };
 
-            Imports.DeviceResolution resolution = Imports.DeviceResolution.PS5000A_DR_16BIT;
+                Imports.DeviceResolution resolution = Imports.DeviceResolution.PS5000A_DR_16BIT;
 
-            if (_handle > 0)
-            {
-                Imports.CloseUnit(_handle);
-                //textBoxUnitInfo.Text = "";
-                _handle = 0;
-                button1.Text = "Open";
-            }
-            else
-            {
-                uint status = Imports.OpenUnit(out handle, null, resolution);
-
-                if (handle > 0)
+                if (_handle > 0)
                 {
-                    _handle = handle;
-
-                    if (status == StatusCodes.PICO_POWER_SUPPLY_NOT_CONNECTED || status == StatusCodes.PICO_USB3_0_DEVICE_NON_USB3_0_PORT)
-                    {
-                        status = Imports.ChangePowerSource(_handle, status);
-                    }
-                    else if (status != StatusCodes.PICO_OK)
-                    {
-                        MessageBox.Show("Cannot open device error code: " + status.ToString(), "Error Opening Device", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        this.Close();
-                    }
-                    else
-                    {
-                        // Do nothing - power supply connected
-                    }
-
-                    //textBoxUnitInfo.Text = "Handle            " + _handle.ToString() + "\r\n";
-
-                    //for (int i = 0; i < 9; i++)
-                    //{
-                    //    short requiredSize;
-                    //    Imports.GetUnitInfo(_handle, UnitInfo, 80, out requiredSize, (uint)i);
-                    //    textBoxUnitInfo.AppendText(description[i] + UnitInfo + "\r\n");
-                    //}
-                    button1.Text = "Закрыть";
+                    Imports.CloseUnit(_handle);
+                    _handle = 0;
+                    button1.Text = "Open";
                 }
+                else
+                {
+                    uint status = Imports.OpenUnit(out handle, null, resolution);
+
+                    if (handle > 0)
+                    {
+                        _handle = handle;
+
+                        if (status == StatusCodes.PICO_POWER_SUPPLY_NOT_CONNECTED || status == StatusCodes.PICO_USB3_0_DEVICE_NON_USB3_0_PORT)
+                        {
+                            status = Imports.ChangePowerSource(_handle, status);
+                        }
+                        else if (status != StatusCodes.PICO_OK)
+                        {
+                            MessageBox.Show("Cannot open device error code: " + status.ToString(), "Error Opening Device", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            this.Close();
+                        }
+                        else
+                        {
+                            // Do nothing - power supply connected
+                        }
+
+
+                        button1.Text = "Закрыть";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Не удалось распознать шаг по времени");
+
             }
         }
 
@@ -664,7 +670,7 @@ namespace PS5000A
             while (retry);
             while (!_ready)
             {
-              //  Thread.Sleep(1);
+                //  Thread.Sleep(1);
                 Application.DoEvents();
             }
             Imports.Stop(_handle);
@@ -699,7 +705,7 @@ namespace PS5000A
                 }
             }
 
-             Application.DoEvents();
+            Application.DoEvents();
         }
 
         private void InitializeComponent()
@@ -1206,7 +1212,7 @@ namespace PS5000A
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(8, 224);
+            this.label19.Location = new System.Drawing.Point(8, 230);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(143, 18);
             this.label19.TabIndex = 43;
@@ -1215,7 +1221,7 @@ namespace PS5000A
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(8, 199);
+            this.label18.Location = new System.Drawing.Point(8, 204);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(149, 18);
             this.label18.TabIndex = 42;
@@ -1738,23 +1744,44 @@ namespace PS5000A
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Switch1.SendCmd(0, int.Parse(textBox1.Text));
-            Thread.Sleep(500);
-            textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+            try
+            {
+                Switch1.SendCmd(0, int.Parse(textBox1.Text));
+                Thread.Sleep(500);
+                textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Не удалось послать команду");
+            }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            Switch1.SendCmd(2, int.Parse(textBox1.Text));
-            Thread.Sleep(500);
-            textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+            try
+            {
+                Switch1.SendCmd(2, int.Parse(textBox1.Text));
+                Thread.Sleep(500);
+                textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Не удалось послать команду");
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Switch1.SendCmd(1, int.Parse(textBox1.Text));
-            Thread.Sleep(500);
-            textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+            try
+            {
+                Switch1.SendCmd(1, int.Parse(textBox1.Text));
+                Thread.Sleep(500);
+                textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Не удалось послать команду");
+            }           
         }
 
         private string[] names_;
@@ -1865,7 +1892,7 @@ namespace PS5000A
                     Switch1.SendCmd(0, j);
                     while (Switch1.port.BytesToRead == 0) { Thread.Sleep(50); };
                     textBoxUnitInfo.AppendText(Switch1.GetAccepted() + "\n");
-                   // Thread.Sleep(500);// подождем пока напряжение устаканится на ПЭ
+                    // Thread.Sleep(500);// подождем пока напряжение устаканится на ПЭ
                     for (int k = 0; k < checkedListBox2.CheckedIndices.Count; k++)
                     {
 
@@ -1924,7 +1951,7 @@ namespace PS5000A
                             {
                                 if (textBox16.Text.Length > 0)
                                 {
-                                    Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text), 
+                                    Complex[] f = FurieTransf(arrA, oscilloscope_timestep, -oscilloscope_timestep * double.Parse(textBox13.Text),
                                          double.Parse(textBox4.Text), double.Parse(textBox5.Text), int.Parse(textBox6.Text));
                                     Complex[] filtr = LoadFromFileC(textBox16.Text);
                                     f = FuncMult(f, double.Parse(textBox5.Text), double.Parse(textBox4.Text), filtr);
@@ -2029,7 +2056,7 @@ namespace PS5000A
         }
         private void button13_Click(object sender, EventArgs e)
         {
-       
+
         }
 
         private void label13_Click(object sender, EventArgs e)
