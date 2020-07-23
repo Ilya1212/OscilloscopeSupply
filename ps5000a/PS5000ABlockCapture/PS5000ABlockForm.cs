@@ -780,6 +780,7 @@ namespace PS5000A
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button9 = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.textBox17 = new System.Windows.Forms.TextBox();
             this.textBox12 = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
             this.checkBox7 = new System.Windows.Forms.CheckBox();
@@ -792,7 +793,6 @@ namespace PS5000A
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.textBox17 = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -1269,7 +1269,7 @@ namespace PS5000A
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(685, 24);
             this.textBox3.TabIndex = 38;
-            this.textBox3.Text = "C:\\TEMP\\";
+            this.textBox3.Text = "C:\\Zamer\\";
             // 
             // checkBox2
             // 
@@ -1333,7 +1333,7 @@ namespace PS5000A
             this.textBox14.Name = "textBox14";
             this.textBox14.Size = new System.Drawing.Size(100, 24);
             this.textBox14.TabIndex = 32;
-            this.textBox14.Text = "25100";
+            this.textBox14.Text = "5100";
             this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label21
@@ -1351,7 +1351,7 @@ namespace PS5000A
             this.textBox13.Name = "textBox13";
             this.textBox13.Size = new System.Drawing.Size(100, 24);
             this.textBox13.TabIndex = 30;
-            this.textBox13.Text = "25000";
+            this.textBox13.Text = "5000";
             this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label20
@@ -1387,7 +1387,7 @@ namespace PS5000A
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(100, 24);
             this.textBox10.TabIndex = 26;
-            this.textBox10.Text = "60000";
+            this.textBox10.Text = "40000";
             this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label14
@@ -1440,8 +1440,6 @@ namespace PS5000A
             // checkBox9
             // 
             this.checkBox9.AutoSize = true;
-            this.checkBox9.Checked = true;
-            this.checkBox9.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox9.Location = new System.Drawing.Point(4, 161);
             this.checkBox9.Name = "checkBox9";
             this.checkBox9.Size = new System.Drawing.Size(335, 22);
@@ -1460,8 +1458,6 @@ namespace PS5000A
             // checkBox8
             // 
             this.checkBox8.AutoSize = true;
-            this.checkBox8.Checked = true;
-            this.checkBox8.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox8.Location = new System.Drawing.Point(6, 111);
             this.checkBox8.Name = "checkBox8";
             this.checkBox8.Size = new System.Drawing.Size(339, 22);
@@ -1538,6 +1534,15 @@ namespace PS5000A
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Обработка";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // textBox17
+            // 
+            this.textBox17.Location = new System.Drawing.Point(8, 172);
+            this.textBox17.Multiline = true;
+            this.textBox17.Name = "textBox17";
+            this.textBox17.Size = new System.Drawing.Size(674, 170);
+            this.textBox17.TabIndex = 8;
+            this.textBox17.Text = "Информация о построенном разностном замере";
             // 
             // textBox12
             // 
@@ -1637,15 +1642,6 @@ namespace PS5000A
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
-            // 
-            // textBox17
-            // 
-            this.textBox17.Location = new System.Drawing.Point(8, 172);
-            this.textBox17.Multiline = true;
-            this.textBox17.Name = "textBox17";
-            this.textBox17.Size = new System.Drawing.Size(674, 170);
-            this.textBox17.TabIndex = 8;
-            this.textBox17.Text = "Информация о построенном разностном замере";
             // 
             // PS5000ABlockForm
             // 
