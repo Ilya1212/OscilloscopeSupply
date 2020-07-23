@@ -1875,7 +1875,8 @@ namespace PS5000A
         {
             if (switch_connected)
             {
-                string dir = String.Concat(textBox3.Text, "/");
+                string dir = textBox3.Text;
+                if ( dir[dir.Length-1] != '\\')    dir =     String.Concat(dir, "\\");
                 Directory.CreateDirectory(dir);
 
                 //==============================================================
@@ -1934,7 +1935,7 @@ namespace PS5000A
                             {
                                 save = 0; stop_flag = false;
                             }
-                            dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            dir = String.Concat(textBox3.Text,  CODES[j], "\\");
                             Directory.CreateDirectory(dir);
                             string fn = String.Concat("raw_", CODES[j], "2", CODES[m], ".txt");
                             Save2File(String.Concat(dir, fn), arrA);
@@ -1952,7 +1953,7 @@ namespace PS5000A
                             //вставить фильтр по частоте
 
 
-                            dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            dir = String.Concat(textBox3.Text,  CODES[j], "\\");
                             Directory.CreateDirectory(dir);
                             fn = String.Concat("afterf1_", CODES[j], "2", CODES[m], ".txt");
 
@@ -1974,7 +1975,7 @@ namespace PS5000A
                                 }
                             }
 
-                            dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            dir = String.Concat(textBox3.Text,  CODES[j], "\\");
                             Directory.CreateDirectory(dir);
                             fn = String.Concat("afterf2_", CODES[j], "2", CODES[m], ".txt");
 
@@ -1984,7 +1985,7 @@ namespace PS5000A
                             ///===========================================================
 
                             //   Save2File(String.Concat(textBox3.Text,"ft_", CODES[j], "2", CODES[m], ".txt"), abs_f);
-                            dir = String.Concat(textBox3.Text, "/", CODES[j], "/");
+                            dir = String.Concat(textBox3.Text,  CODES[j], "\\");
                             Directory.CreateDirectory(dir);
                             fn = String.Concat(CODES[j], "2", CODES[m], ".txt");
                             Save2File(String.Concat(dir, fn), arrA);
@@ -2014,7 +2015,7 @@ namespace PS5000A
             try
             {
                 //Создаём или перезаписываем существующий файл
-                StreamWriter sw = File.CreateText( String.Concat(textBox12.Text, "/","info.txt"));
+                StreamWriter sw = File.CreateText( String.Concat(textBox12.Text, "\\","info.txt"));
                 //Записываем текст в поток файла
                 sw.WriteLine(textBox17.Text);
                 //Закрываем файл
@@ -2032,9 +2033,9 @@ namespace PS5000A
                     int m = checkedListBox2.CheckedIndices[k];
                     if (m != j)
                     {
-                        string dir1 = String.Concat(textBox7.Text, "/", CODES[j], "/");
-                        string dir2 = String.Concat(textBox8.Text, "/", CODES[j], "/");
-                        string dir3 = String.Concat(textBox12.Text, "/", CODES[j], "/");
+                        string dir1 = String.Concat(textBox7.Text,CODES[j], "\\");
+                        string dir2 = String.Concat(textBox8.Text,  CODES[j], "\\");
+                        string dir3 = String.Concat(textBox12.Text, CODES[j], "\\");
                         string fn = String.Concat(CODES[j], "2", CODES[m], ".txt");
                         StreamReader R1 = new StreamReader(String.Concat(dir1, fn));
                         StreamReader R2 = new StreamReader(String.Concat(dir2, fn));
