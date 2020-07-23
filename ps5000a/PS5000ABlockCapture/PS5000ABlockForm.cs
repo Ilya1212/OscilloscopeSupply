@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Globalization;
 namespace PS5000A
 {
     public partial class PS5000ABlockForm : Form
@@ -370,10 +370,12 @@ namespace PS5000A
         {
             using (StreamWriter Writer = new StreamWriter(filename))
             {
+                string specifier = "E05";
+                CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
                 Writer.WriteLine(data.Length);
                 for (int i = 0; i < data.Length; i++)
                 {
-                    Writer.WriteLine(data[i].ToString().Replace(',', '.'));
+                    Writer.WriteLine(data[i].ToString(specifier, culture).Replace(',', '.'));
                 }
                 Writer.Flush();
                 Writer.Close();
